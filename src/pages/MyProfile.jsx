@@ -36,14 +36,32 @@ function MyProfile() {
     setSaving(true);
     setMessage('');
     try {
-      const payload = new FormData();
-      Object.entries(data).forEach(([key, value]) => payload.append(key, value));
-      const url = profile ? '/my-profile' : '/my-profile';
-      const method = profile ? api.put : api.post;
-      await method(url, payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const usesFileUpload = data.profile_image instanceof File;
+
+      if (usesFileUpload) {
+        const payload = new FormData();
+        Object.entries(data).forEach(([key, value]) => payload.append(key, value));
+        if (profile) {
+          payload.append('_method', 'PUT');
+        }
+        await api.post('/my-profile', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      } else {
+        const payload = { ...data };
+        if (profile) {
+          await api.put('/my-profile', payload);
+        } else {
+          await api.post('/my-profile', payload);
+        }
+      }
+
       setMessage('Profile submitted for review.');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Could not save profile.');
+      const errors = error.response?.data?.errors;
+      const serverMessage = error.response?.data?.message;
+      const feedback = errors
+        ? Object.values(errors).flat().join(' ')
+        : serverMessage;
+      setMessage(feedback || 'Could not save profile.');
     } finally {
       setSaving(false);
     }
