@@ -1,0 +1,42 @@
+@use "variables" as *;
+
+.topbar {
+  background-color: $navbg;
+  height: 56px;
+  box-shadow:
+    rgba(0, 0, 0, 0.35) 0px 10px 30px,
+    rgba(255, 255, 255, 0.04) 0px 1px inset;
+  border-bottom: 1px solid $border;
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    &__brand {
+      a {
+        display: flex;
+        align-items: center;
+        img {
+          height: auto;
+          width: 30px;
+        }
+        p {
+            font-size: $font-md;
+          margin: 0 0 0 10px;
+          font-weight: 500;
+          span {
+            color: $secondary;
+          }
+        }
+      }
+    }
+    &__links {
+      display: flex;
+      align-items: center;
+      a {
+        margin-left: 32px;
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+}

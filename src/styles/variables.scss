@@ -1,13 +1,51 @@
-$brand: #002b5b;
-$brand-soft: #3b5fa5;
-$accent: #ff6f61;
-$accent-soft: #ffd8d0;
-$bg: #f8fafc;
-$card: #ffffff;
-$text: #1f2937;
-$muted: #6b7280;
-$border: #d1d5db;
-$shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-$radius: 24px;
-$radius-sm: 14px;
-$max-width: 1120px;
+//main
+$font:
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  Arial,
+  sans-serif;
+$bg: #0b1220;
+$text: #e5e7eb;
+$sub-text: #b3aecf;
+$muted: #9ca3af;
+$card: #0f1a2e;
+$border: rgba(255, 255, 255, 0.08);
+$primary: #38bdf8;
+$secondary: #ff4f7b;
+$white: #ffffff;
+
+//navbar
+$navbg: rgba(10, 12, 20, 0.7);
+$border: rgba(255, 255, 255, 0.08);
+
+//infor cards
+$info: linear-gradient(145deg, rgba(24, 16, 52, 0.9), rgba(24, 19, 61, 0.96));
+
+//breakpoints
+$mobile: 768px;
+$tablet: 1024px;
+$desktop: 1200px;
+
+// Desktop font sizes
+$font-xs: 0.75rem; // 12px
+$font-sm: 0.875rem; // 14px
+$font-base: 1rem; // 16px
+$font-md: 1.125rem; // 18px
+$font-lg: 1.375rem; // 22px
+$font-xl: 1.75rem; // 28px
+$font-2xl: 2.25rem; // 36px
+$font-3xl: 3rem; // 48px
+$font-hero: 3.5rem; // 56px
+
+// Mobile font sizes
+$font-mobile-xs: 0.6875rem; // 11px
+$font-mobile-sm: 0.8125rem; // 13px
+$font-mobile-base: 0.9375rem; // 15px
+$font-mobile-md: 1rem; // 16px
+$font-mobile-lg: 1.25rem; // 20px
+$font-mobile-xl: 1.5rem; // 24px
+$font-mobile-2xl: 1.875rem; // 30px
+$font-mobile-3xl: 2.25rem; // 36px
+$font-mobile-hero: 2.375rem; // 38px

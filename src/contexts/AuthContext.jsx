@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api/api';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
 export const AuthContext = createContext(null);
 
-const getToken = () => localStorage.getItem('authToken');
-const getAdminToken = () => localStorage.getItem('adminToken');
+const getToken = () => localStorage.getItem("authToken");
+const getAdminToken = () => localStorage.getItem("adminToken");
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -26,55 +26,56 @@ export function AuthProvider({ children }) {
 
     if (token) {
       requests.push(
-        api.get('/me')
+        api
+          .get("/me")
           .then((response) => setUser(response.data.user))
           .catch(() => {
-            localStorage.removeItem('authToken');
+            localStorage.removeItem("authToken");
             setUser(null);
-          })
+          }),
       );
     }
 
     if (adminToken) {
-      setAdmin({ role: 'admin' });
+      setAdmin({ role: "admin" });
     }
 
     Promise.all(requests).finally(() => setLoading(false));
   }, []);
 
   const login = async (payload) => {
-    const response = await api.post('/login', payload);
-    localStorage.setItem('authToken', response.data.token);
+    const response = await api.post("/login", payload);
+    localStorage.setItem("authToken", response.data.token);
     setUser(response.data.user);
     return response.data;
   };
 
   const register = async (payload) => {
-    const response = await api.post('/register', payload);
-    localStorage.setItem('authToken', response.data.token);
+    const response = await api.post("/register", payload);
+    localStorage.setItem("authToken", response.data.token);
     setUser(response.data.user);
     return response.data;
   };
 
   const logout = async () => {
-    await api.post('/logout');
-    localStorage.removeItem('authToken');
+    await api.post("/logout");
+    localStorage.removeItem("authToken");
     setUser(null);
-    navigate('/login');
+    navigate("/login");
   };
 
   const adminLogin = async (payload) => {
-    const response = await api.post('/admin/login', payload);
-    localStorage.setItem('adminToken', response.data.token);
+    const response = await api.post("/admin/login", payload);
+    localStorage.setItem("adminToken", response.data.token);
     setAdmin(response.data.admin);
     return response.data;
   };
 
   const adminLogout = async () => {
-    await api.post('/admin/logout');
-    localStorage.removeItem('adminToken');
+    await api.post("/admin/logout");
+    localStorage.removeItem("adminToken");
     setAdmin(null);
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   return (

@@ -1,22 +1,30 @@
-@use './variables' as *;
+@use "./variables" as *;
+@use "./header";
+@use "./home";
+@use "./profiles";
 
 * {
   box-sizing: border-box;
 }
 
 :root {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-family: $font;
   color: $text;
   background: $bg;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   min-height: 100%;
 }
 
 body {
+  height: 100%;
   margin: 0;
-  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  background: $bg;
+  color: $text;
 }
 
 button,
@@ -35,6 +43,30 @@ a {
   text-decoration: none;
 }
 
+.container {
+  padding: 16px;
+  width: min(1320px, calc(100% - 2.5rem));
+  margin: auto;
+
+  @media (max-width: #{#{$mobile - 1px}}) {
+    padding: 15px;
+    width: 100%;
+  }
+
+  @media (max-width: #{$mobile - 1px}) {
+    padding: 16px;
+    width: 100%;
+  }
+
+  @media (min-width: $tablet) and (max-width: #{$desktop - 1px}) {
+    padding: 20px;
+  }
+}
+.muted {
+  color: $muted;
+}
+
+/* 
 img {
   max-width: 100%;
   display: block;
@@ -412,3 +444,4 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+ */

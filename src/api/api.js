@@ -1,36 +1,48 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: "https://api.quickpair.ca/api",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
 api.interceptors.request.use((config) => {
-  const adminToken = localStorage.getItem('adminToken');
-  const authToken = localStorage.getItem('authToken');
-  const useAdminToken = config.url?.startsWith('/admin');
-  const token = useAdminToken ? adminToken || authToken : authToken || adminToken;
+  const adminToken = localStorage.getItem("adminToken");
+  const authToken = localStorage.getItem("authToken");
+
+  const isAdminRoute = config.url?.startsWith("/admin");
+
+  const token = isAdminRoute
+    ? adminToken || authToken
+    : authToken || adminToken;
 
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
-const logoutOnUnauthorized = (error) => {
-  if (error.response?.status === 401) {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('adminToken');
-    window.location.href = '/login';
-  }
-  return Promise.reject(error);
-};
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const requestUrl = error.config?.url || "";
+      const isAdminRoute = requestUrl.startsWith("/admin");
 
-api.interceptors.response.use((response) => response, logoutOnUnauthorized);
+      if (isAdminRoute) {
+        localStorage.removeItem("adminToken");
+        window.location.href = "/admin/login";
+      } else {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
