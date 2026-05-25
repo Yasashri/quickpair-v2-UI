@@ -1,29 +1,47 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import api from '../api/api';
-import Card from '../components/Card';
-import useAuth from '../hooks/useAuth';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../api/api";
+import Card from "../components/Card";
+import useAuth from "../hooks/useAuth";
 
 function ProfileDetail() {
   const { id } = useParams();
   const { user, isAuthenticated } = useAuth();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [conversation, setConversation] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [conversationLoading, setConversationLoading] = useState(false);
 
-  const profileUserId = profile?.user?.id || profile?.user_id || profile?.owner_id || profile?.author_id;
-  const isOwnProfile = Boolean(user?.id && profileUserId && user.id === profileUserId);
-  const isApproved = profile?.status === 'approved' || profile?.approved === true;
+  const profileUserId =
+    profile?.user?.id ||
+    profile?.user_id ||
+    profile?.owner_id ||
+    profile?.author_id;
+
+  const isOwnProfile = Boolean(
+    user?.id && profileUserId && user.id === profileUserId,
+  );
+  const isApproved =
+    profile?.status === "approved" || profile?.approved === true;
+
+  const profileImage =
+    profile?.profile_image_url ||
+    profile?.profile_image ||
+    `https://i.pravatar.cc/500?img=${(Number(id) % 70) + 1}`;
 
   useEffect(() => {
     setLoading(true);
-    api.get(`/profiles/${id}`).then((response) => {
-      setProfile(response.data.profile);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+
+    api
+      .get(`/profiles/${id}`)
+      .then((response) => {
+        setProfile(response.data.profile);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [id]);
 
   useEffect(() => {
@@ -32,7 +50,9 @@ function ProfileDetail() {
         setConversation([]);
         return;
       }
+
       setConversationLoading(true);
+
       try {
         const response = await api.get(`/messages/${profileUserId}`);
         setConversation(response.data.messages || []);
@@ -50,11 +70,21 @@ function ProfileDetail() {
 
   const sendMessage = async (event) => {
     event.preventDefault();
-    if (!message.trim() || !profileUserId) return;
+
+    if (!message.trim() || !profileUserId) {
+      return;
+    }
+
     setSending(true);
+
     try {
-      await api.post('/messages', { receiver_id: profileUserId, body: message.trim() });
-      setMessage('');
+      await api.post("/messages", {
+        receiver_id: profileUserId,
+        body: message.trim(),
+      });
+
+      setMessage("");
+
       const response = await api.get(`/messages/${profileUserId}`);
       setConversation(response.data.messages || []);
     } catch {
@@ -65,40 +95,75 @@ function ProfileDetail() {
   };
 
   if (loading) {
-    return <section className="page-card"><p>Loading profile...</p></section>;
+    return (
+      <section className='page-card profile-page'>
+        <p className='profile-status'>Loading profile...</p>
+      </section>
+    );
   }
 
   if (!profile) {
-    return <section className="page-card"><p>Profile not found.</p></section>;
+    return (
+      <section className='page-card profile-page'>
+        <p className='profile-status'>Profile not found.</p>
+      </section>
+    );
   }
 
   return (
-    <section className="page-card profile-page">
-      <Card title={profile.display_name || 'Profile'}>
-        <p>{profile.bio || 'No biography available.'}</p>
-        <dl className="profile-details">
+    <section className='page-card profile-page'>
+      <Card title={profile.display_name || "Profile"}>
+        <div className='profile-hero'>
+          <img
+            src={profileImage}
+            alt={profile.display_name || "Profile image"}
+          />
+
+          <div className='profile-hero__content'>
+            <span
+              className={`profile-badge ${isApproved ? "is-approved" : ""}`}
+            >
+              {isApproved ? "Approved profile" : profile.status || "Pending"}
+            </span>
+
+            <h2>{profile.display_name || "New member"}</h2>
+
+            <p>{profile.bio || "No biography available."}</p>
+          </div>
+        </div>
+
+        <dl className='profile-details'>
           <div>
             <dt>Age</dt>
-            <dd>{profile.age || '—'}</dd>
+            <dd>{profile.age || "—"}</dd>
           </div>
+
           <div>
             <dt>Location</dt>
-            <dd>{profile.city ? `${profile.city}, ${profile.country}` : 'Not listed'}</dd>
+            <dd>
+              {profile.city
+                ? `${profile.city}, ${profile.country}`
+                : "Not listed"}
+            </dd>
           </div>
+
           <div>
             <dt>Occupation</dt>
-            <dd>{profile.occupation || 'Not listed'}</dd>
+            <dd>{profile.occupation || "Not listed"}</dd>
           </div>
+
           <div>
             <dt>Goal</dt>
-            <dd>{profile.relationship_goal || 'Looking for connection'}</dd>
+            <dd>{profile.relationship_goal || "Looking for connection"}</dd>
           </div>
+
           {profile.interests && (
             <div>
               <dt>Interests</dt>
               <dd>{profile.interests}</dd>
             </div>
           )}
+
           {profile.status && (
             <div>
               <dt>Status</dt>
@@ -107,47 +172,68 @@ function ProfileDetail() {
           )}
         </dl>
       </Card>
+      <div id='messages' className='profile-messages-section'>
+        <Card title='Messages'>
+          {!isApproved ? (
+            <p className='message-notice'>
+              This profile is not approved yet. Messaging is unavailable.
+            </p>
+          ) : isOwnProfile ? (
+            <p className='message-notice'>
+              You cannot message your own profile.
+            </p>
+          ) : !isAuthenticated ? (
+            <p className='message-notice'>
+              Please log in to message this user.
+            </p>
+          ) : (
+            <>
+              <div className='conversation-window'>
+                {conversationLoading ? (
+                  <p className='message-notice'>Loading conversation...</p>
+                ) : conversation.length ? (
+                  conversation.map((messageItem) => (
+                    <div
+                      key={messageItem.id}
+                      className={`message-bubble ${
+                        messageItem.sender_id === profileUserId
+                          ? "message-bubble--other"
+                          : "message-bubble--self"
+                      }`}
+                    >
+                      <p>{messageItem.body}</p>
+                      <span>
+                        {new Date(messageItem.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className='message-notice'>
+                    No messages yet. Start the conversation below.
+                  </p>
+                )}
+              </div>
 
-      <Card title="Messages">
-        {!isApproved ? (
-          <p>This profile is not approved yet. Messaging is unavailable.</p>
-        ) : isOwnProfile ? (
-          <p>You cannot message your own profile.</p>
-        ) : !isAuthenticated ? (
-          <p>Please log in to message this user.</p>
-        ) : (
-          <>
-            <div className="conversation-window">
-              {conversationLoading ? (
-                <p>Loading conversation...</p>
-              ) : conversation.length ? (
-                conversation.map((messageItem) => (
-                  <div
-                    key={messageItem.id}
-                    className={`message-bubble ${messageItem.sender_id === profileUserId ? 'message-bubble--other' : 'message-bubble--self'}`}
-                  >
-                    <p>{messageItem.body}</p>
-                    <span>{new Date(messageItem.created_at).toLocaleString()}</span>
-                  </div>
-                ))
-              ) : (
-                <p>No messages yet. Start the conversation below.</p>
-              )}
-            </div>
-            <form className="message-form" onSubmit={sendMessage}>
-              <textarea
-                rows={4}
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
-                placeholder="Write a message..."
-              />
-              <button type="submit" className="button" disabled={sending || !message.trim()}>
-                {sending ? 'Sending...' : 'Send Message'}
-              </button>
-            </form>
-          </>
-        )}
-      </Card>
+              <form className='message-form' onSubmit={sendMessage}>
+                <textarea
+                  rows={4}
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  placeholder='Write a message...'
+                />
+
+                <button
+                  type='submit'
+                  className='button'
+                  disabled={sending || !message.trim()}
+                >
+                  {sending ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            </>
+          )}
+        </Card>
+      </div>
     </section>
   );
 }

@@ -1,0 +1,279 @@
+@use "./variables.scss" as *;
+
+.page-card {
+  width: min(100% - 32px, 1100px);
+  margin: 36px auto 64px;
+  padding: 34px;
+  border: 1px solid $border;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(255, 79, 123, 0.1), transparent 38%),
+    rgba(15, 26, 46, 0.82);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+
+  .card {
+    border-radius: 24px;
+    background: rgba(15, 26, 46, 0.76);
+
+    &__title {
+      font-size: $font-2xl;
+    }
+  }
+}
+
+.profile-form {
+  display: grid;
+  gap: 18px;
+
+  .profile-image-preview {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid $border;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+
+    img {
+      width: 120px;
+      height: 120px;
+      flex: 0 0 120px;
+      border: 2px solid rgba(56, 189, 248, 0.32);
+      border-radius: 24px;
+      object-fit: cover;
+      background: $card;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    div {
+      h3 {
+        margin: 0 0 8px;
+        color: $white;
+        font-size: $font-lg;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+        color: $sub-text;
+        font-size: $font-sm;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  label {
+    display: grid;
+    gap: 8px;
+    color: $text;
+    font-size: $font-sm;
+    font-weight: 700;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid $border;
+    border-radius: 16px;
+    outline: none;
+    color: $text;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: $font-base;
+    transition: 180ms ease;
+
+    &:focus {
+      border-color: rgba(56, 189, 248, 0.48);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+    }
+
+    &::placeholder {
+      color: $muted;
+    }
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  textarea {
+    min-height: 140px;
+    padding-top: 14px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  input[type="file"] {
+    min-height: auto;
+    padding: 13px 16px;
+    cursor: pointer;
+
+    &::file-selector-button {
+      margin-right: 12px;
+      padding: 8px 14px;
+      border: 0;
+      border-radius: 999px;
+      color: $bg;
+      background: $primary;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  }
+
+  .form-note {
+    margin: 4px 0 0;
+    padding: 13px 15px;
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    border-radius: 16px;
+    color: $sub-text;
+    background: rgba(56, 189, 248, 0.08);
+    font-size: $font-sm;
+    line-height: 1.5;
+  }
+
+  .button {
+    width: fit-content;
+    min-width: 180px;
+    margin-top: 8px;
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+/* TABLET */
+@media (max-width: #{$tablet - 1px}) {
+  .page-card {
+    margin-top: 28px;
+    padding: 28px;
+    border-radius: 24px;
+
+    .card {
+      &__title {
+        font-size: $font-xl;
+      }
+    }
+  }
+
+  .profile-form {
+    .form-grid {
+      gap: 16px;
+    }
+
+    .profile-image-preview {
+      img {
+        width: 110px;
+        height: 110px;
+        flex: 0 0 110px;
+      }
+    }
+  }
+}
+
+/* MOBILE */
+@media (max-width: #{$mobile - 1px}) {
+  .page-card {
+    width: min(100% - 30px, 1100px);
+    margin-top: 22px;
+    margin-bottom: 44px;
+    padding: 18px;
+    border-radius: 20px;
+
+    .card {
+      &__title {
+        font-size: $font-mobile-xl;
+      }
+    }
+  }
+
+  .profile-form {
+    gap: 16px;
+
+    .profile-image-preview {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+
+      img {
+        width: 100%;
+        height: 240px;
+        flex: initial;
+        border-radius: 18px;
+      }
+
+      div {
+        h3 {
+          font-size: $font-mobile-lg;
+        }
+
+        p {
+          font-size: $font-mobile-sm;
+        }
+      }
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    label {
+      font-size: $font-mobile-sm;
+    }
+
+    input,
+    select,
+    textarea {
+      min-height: 48px;
+      font-size: $font-mobile-base;
+      border-radius: 14px;
+    }
+
+    textarea {
+      min-height: 130px;
+    }
+
+    .button {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 420px) {
+  .page-card {
+    padding: 14px;
+  }
+
+  .profile-form {
+    .profile-image-preview {
+      img {
+        height: 210px;
+      }
+    }
+
+    input[type="file"] {
+      padding: 12px;
+
+      &::file-selector-button {
+        display: block;
+        width: 100%;
+        margin: 0 0 10px;
+      }
+    }
+  }
+}

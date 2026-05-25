@@ -1,0 +1,156 @@
+@use "./variables.scss" as *;
+
+.form-card {
+  width: min(100% - 32px, 520px);
+  margin: 48px auto 64px;
+  padding: 38px;
+  border: 1px solid $border;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(255, 79, 123, 0.12), transparent 38%),
+    rgba(15, 26, 46, 0.86);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+
+  h1 {
+    margin: 0 0 12px;
+    color: $white;
+    font-size: $font-3xl;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  > p {
+    margin: 0 0 28px;
+    color: $sub-text;
+    font-size: $font-base;
+    line-height: 1.65;
+  }
+
+  form {
+    display: grid;
+    gap: 18px;
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: $text;
+      font-size: $font-sm;
+      font-weight: 700;
+
+      input {
+        width: 100%;
+        min-height: 50px;
+        padding: 0 16px;
+        border: 1px solid $border;
+        border-radius: 16px;
+        outline: none;
+        color: $text;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: $font-base;
+        transition: 180ms ease;
+
+        &::placeholder {
+          color: $muted;
+        }
+
+        &:focus {
+          border-color: rgba(56, 189, 248, 0.48);
+          box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+        }
+      }
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 6px;
+    }
+  }
+
+  .form-error {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 79, 123, 0.4);
+    border-radius: 14px;
+    color: $secondary;
+    background: rgba(255, 79, 123, 0.1);
+    font-size: $font-sm;
+    line-height: 1.5;
+  }
+
+  .form-note {
+    margin: 22px 0 0;
+    color: $sub-text;
+    font-size: $font-sm;
+    text-align: center;
+
+    a {
+      color: $primary;
+      font-weight: 800;
+
+      &:hover {
+        color: $secondary;
+      }
+    }
+  }
+}
+
+/* TABLET */
+@media (max-width: #{$tablet - 1px}) {
+  .form-card {
+    margin-top: 40px;
+    padding: 32px;
+    border-radius: 24px;
+
+    h1 {
+      font-size: $font-2xl;
+    }
+  }
+}
+
+/* MOBILE */
+@media (max-width: #{$mobile - 1px}) {
+  .form-card {
+    width: min(100% - 30px, 520px);
+    margin-top: 28px;
+    margin-bottom: 44px;
+    padding: 26px 18px;
+    border-radius: 20px;
+
+    h1 {
+      font-size: $font-mobile-2xl;
+    }
+
+    > p {
+      margin-bottom: 24px;
+      font-size: $font-mobile-base;
+      line-height: 1.6;
+    }
+
+    form {
+      gap: 16px;
+
+      label {
+        font-size: $font-mobile-sm;
+
+        input {
+          min-height: 48px;
+          font-size: $font-mobile-base;
+        }
+      }
+    }
+
+    .form-note {
+      font-size: $font-mobile-sm;
+    }
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 420px) {
+  .form-card {
+    h1 {
+      font-size: $font-mobile-xl;
+    }
+  }
+}

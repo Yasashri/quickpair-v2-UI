@@ -1,67 +1,119 @@
-import { useEffect, useState } from 'react';
-import api from '../api/api';
-import Card from '../components/Card';
+import { useEffect, useState } from "react";
+import api from "../api/api";
+import Card from "../components/Card";
 
 function MyProfile() {
   const [profile, setProfile] = useState(null);
-  const [data, setData] = useState({ first_name: '', last_name: '', display_name: '', age: '', gender: 'male', looking_for: 'any', city: '', country: '', occupation: '', education: '', relationship_goal: '', bio: '' });
+  const [previewImage, setPreviewImage] = useState("/images/default-profile.jpg");
+  const [data, setData] = useState({
+    first_name: "",
+    last_name: "",
+    display_name: "",
+    age: "",
+    gender: "male",
+    looking_for: "any",
+    city: "",
+    country: "",
+    occupation: "",
+    education: "",
+    relationship_goal: "",
+    bio: "",
+    profile_image: "",
+  });
+
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    api.get('/my-profile').then((response) => {
+    api.get("/my-profile").then((response) => {
       const profileData = response.data.profile;
+
       setProfile(profileData);
+
       if (profileData) {
         setData({
-          first_name: profileData.first_name || '',
-          last_name: profileData.last_name || '',
-          display_name: profileData.display_name || '',
-          age: profileData.age || '',
-          gender: profileData.gender || 'male',
-          looking_for: profileData.looking_for || 'any',
-          city: profileData.city || '',
-          country: profileData.country || '',
-          occupation: profileData.occupation || '',
-          education: profileData.education || '',
-          relationship_goal: profileData.relationship_goal || '',
-          bio: profileData.bio || '',
+          first_name: profileData.first_name || "",
+          last_name: profileData.last_name || "",
+          display_name: profileData.display_name || "",
+          age: profileData.age || "",
+          gender: profileData.gender || "male",
+          looking_for: profileData.looking_for || "any",
+          city: profileData.city || "",
+          country: profileData.country || "",
+          occupation: profileData.occupation || "",
+          education: profileData.education || "",
+          relationship_goal: profileData.relationship_goal || "",
+          bio: profileData.bio || "",
+          profile_image: "",
         });
+
+        if (profileData.profile_image_url) {
+          setPreviewImage(profileData.profile_image_url);
+        } else if (profileData.profile_image) {
+          setPreviewImage(profileData.profile_image);
+        }
       }
     });
   }, []);
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    setData({ ...data, profile_image: file });
+    setPreviewImage(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSaving(true);
-    setMessage('');
+    setMessage("");
+
     try {
       const usesFileUpload = data.profile_image instanceof File;
 
       if (usesFileUpload) {
         const payload = new FormData();
-        Object.entries(data).forEach(([key, value]) => payload.append(key, value));
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== "" && value !== null && value !== undefined) {
+            payload.append(key, value);
+          }
+        });
+
         if (profile) {
-          payload.append('_method', 'PUT');
+          payload.append("_method", "PUT");
         }
-        await api.post('/my-profile', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+        await api.post("/my-profile", payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       } else {
         const payload = { ...data };
+        delete payload.profile_image;
+
         if (profile) {
-          await api.put('/my-profile', payload);
+          await api.put("/my-profile", payload);
         } else {
-          await api.post('/my-profile', payload);
+          await api.post("/my-profile", payload);
         }
       }
 
-      setMessage('Profile submitted for review.');
+      setMessage("Profile submitted for review.");
     } catch (error) {
       const errors = error.response?.data?.errors;
       const serverMessage = error.response?.data?.message;
+
       const feedback = errors
-        ? Object.values(errors).flat().join(' ')
+        ? Object.values(errors).flat().join(" ")
         : serverMessage;
-      setMessage(feedback || 'Could not save profile.');
+
+      setMessage(feedback || "Could not save profile.");
     } finally {
       setSaving(false);
     }
@@ -69,36 +121,95 @@ function MyProfile() {
 
   return (
     <section className="page-card">
-      <Card title={profile ? 'Update your profile' : 'Create your profile'}>
+      <Card title={profile ? "Update your profile" : "Create your profile"}>
         <form className="profile-form" onSubmit={handleSubmit}>
+          <div className="profile-image-preview">
+            <img src={previewImage} alt="Profile preview" />
+
+            <div>
+              <h3>Profile photo</h3>
+              <p>
+                Upload a clear photo. This image will be shown on your public
+                profile after approval.
+              </p>
+            </div>
+          </div>
+
+          <label>
+            Profile image
+            <input
+              type="file"
+              accept="image/*"
+              name="profile_image"
+              onChange={handleImageChange}
+            />
+          </label>
+
           <div className="form-grid">
             <label>
               First name
-              <input value={data.first_name} onChange={(e) => setData({ ...data, first_name: e.target.value })} required />
+              <input
+                value={data.first_name}
+                onChange={(e) =>
+                  setData({ ...data, first_name: e.target.value })
+                }
+                required
+              />
             </label>
+
             <label>
               Last name
-              <input value={data.last_name} onChange={(e) => setData({ ...data, last_name: e.target.value })} required />
+              <input
+                value={data.last_name}
+                onChange={(e) =>
+                  setData({ ...data, last_name: e.target.value })
+                }
+                required
+              />
             </label>
+
             <label>
               Display name
-              <input value={data.display_name} onChange={(e) => setData({ ...data, display_name: e.target.value })} required />
+              <input
+                value={data.display_name}
+                onChange={(e) =>
+                  setData({ ...data, display_name: e.target.value })
+                }
+                required
+              />
             </label>
+
             <label>
               Age
-              <input value={data.age} onChange={(e) => setData({ ...data, age: e.target.value })} type="number" min="18" required />
+              <input
+                value={data.age}
+                onChange={(e) => setData({ ...data, age: e.target.value })}
+                type="number"
+                min="18"
+                required
+              />
             </label>
+
             <label>
               Gender
-              <select value={data.gender} onChange={(e) => setData({ ...data, gender: e.target.value })}>
+              <select
+                value={data.gender}
+                onChange={(e) => setData({ ...data, gender: e.target.value })}
+              >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
             </label>
+
             <label>
               Looking for
-              <select value={data.looking_for} onChange={(e) => setData({ ...data, looking_for: e.target.value })}>
+              <select
+                value={data.looking_for}
+                onChange={(e) =>
+                  setData({ ...data, looking_for: e.target.value })
+                }
+              >
                 <option value="any">Anyone</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -106,36 +217,67 @@ function MyProfile() {
               </select>
             </label>
           </div>
+
           <label>
             City
-            <input value={data.city} onChange={(e) => setData({ ...data, city: e.target.value })} />
+            <input
+              value={data.city}
+              onChange={(e) => setData({ ...data, city: e.target.value })}
+            />
           </label>
+
           <label>
             Country
-            <input value={data.country} onChange={(e) => setData({ ...data, country: e.target.value })} />
+            <input
+              value={data.country}
+              onChange={(e) => setData({ ...data, country: e.target.value })}
+            />
           </label>
+
           <label>
             Occupation
-            <input value={data.occupation} onChange={(e) => setData({ ...data, occupation: e.target.value })} />
+            <input
+              value={data.occupation}
+              onChange={(e) =>
+                setData({ ...data, occupation: e.target.value })
+              }
+            />
           </label>
+
           <label>
             Education
-            <input value={data.education} onChange={(e) => setData({ ...data, education: e.target.value })} />
+            <input
+              value={data.education}
+              onChange={(e) =>
+                setData({ ...data, education: e.target.value })
+              }
+            />
           </label>
+
           <label>
             Goal
-            <input value={data.relationship_goal} onChange={(e) => setData({ ...data, relationship_goal: e.target.value })} />
+            <input
+              value={data.relationship_goal}
+              onChange={(e) =>
+                setData({ ...data, relationship_goal: e.target.value })
+              }
+            />
           </label>
+
           <label>
             Bio
-            <textarea value={data.bio} onChange={(e) => setData({ ...data, bio: e.target.value })} rows="5" />
+            <textarea
+              value={data.bio}
+              onChange={(e) => setData({ ...data, bio: e.target.value })}
+              rows="5"
+            />
           </label>
-          <label>
-            Profile image
-            <input type="file" accept="image/*" name="profile_image" onChange={(e) => setData({ ...data, profile_image: e.target.files[0] })} />
-          </label>
+
           {message && <p className="form-note">{message}</p>}
-          <button type="submit" className="button" disabled={saving}>{saving ? 'Saving...' : profile ? 'Update profile' : 'Create profile'}</button>
+
+          <button type="submit" className="button" disabled={saving}>
+            {saving ? "Saving..." : profile ? "Update profile" : "Create profile"}
+          </button>
         </form>
       </Card>
     </section>
