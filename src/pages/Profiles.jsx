@@ -1,27 +1,29 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../api/api';
-import Card from '../components/Card';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import api from "../api/api";
+import Card from "../components/Card";
 
 function Profiles() {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [query, setQuery] = useState('');
-  const [sortBy, setSortBy] = useState('recent');
-  const [gender, setGender] = useState('all');
-  const debounceDelay = 500; // ms
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
+  const [gender, setGender] = useState("all");
 
-  // Fetch profiles with search, sort, and gender filter
+  const debounceDelay = 500;
+
   useEffect(() => {
     setLoading(true);
+
     const params = {
       search,
       sort: sortBy,
-      ...(gender !== 'all' && { gender }),
+      ...(gender !== "all" && { gender }),
     };
 
-    api.get('/profiles', { params })
+    api
+      .get("/profiles", { params })
       .then((response) => {
         setProfiles(response.data.data || []);
         setLoading(false);
@@ -29,86 +31,116 @@ function Profiles() {
       .catch(() => setLoading(false));
   }, [search, sortBy, gender]);
 
-  // Debounce query -> search so we don't call API on every keystroke
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearch(query);
     }, debounceDelay);
 
     return () => clearTimeout(handler);
-  }, [query, debounceDelay]);
+  }, [query]);
 
   const clearSearch = () => {
-    setSearch('');
-    setQuery('');
-    setSortBy('recent');
-    setGender('all');
+    setSearch("");
+    setQuery("");
+    setSortBy("recent");
+    setGender("all");
   };
 
   return (
-    <section className="page-card">
-      <div className="page-header">
-        <h1>Browse profiles</h1>
-      </div>
+    <section className='container profiles-page'>
+      <div className='page-card'>
+        <div className='page-header'>
+          <span className='eyebrow'>Find your match</span>
+          <h1>Browse profiles</h1>
+          <p>
+            Discover people who share your interests, favorite food spots, and
+            dating goals.
+          </p>
+        </div>
 
-      {/* Search Bar */}
-      <input
-        placeholder="Search by name, hobby, food, country, or city"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{ marginBottom: '1rem', width: '100%' }}
-      />
+        <div className='profiles-filter'>
+          <div className='profiles-filter__search'>
+            <input
+              placeholder='Search by name, hobby, food, country, or city'
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
 
-      {/* Sort and Gender Controls */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          aria-label="Sort profiles"
-        >
-          <option value="recent">Sort: Recent</option>
-          <option value="oldest">Sort: Oldest</option>
-          <option value="name-asc">Sort: Name (A-Z)</option>
-          <option value="name-desc">Sort: Name (Z-A)</option>
-        </select>
+          <div className='profiles-filter__controls'>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label='Sort profiles'
+            >
+              <option value='recent'>Sort: Recent</option>
+              <option value='oldest'>Sort: Oldest</option>
+              <option value='name-asc'>Sort: Name A-Z</option>
+              <option value='name-desc'>Sort: Name Z-A</option>
+            </select>
 
-        <select
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-          aria-label="Filter by gender"
-        >
-          <option value="all">All Genders</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              aria-label='Filter by gender'
+            >
+              <option value='all'>All genders</option>
+              <option value='male'>Male</option>
+              <option value='female'>Female</option>
+              <option value='other'>Other</option>
+            </select>
 
-        {(search || sortBy !== 'recent' || gender !== 'all') && (
-          <button
-            onClick={clearSearch}
-            aria-label="Clear search and reset filters"
-          >
-            Clear
-          </button>
+            {(search || sortBy !== "recent" || gender !== "all") && (
+              <button
+                type='button'
+                className='button button--small button--ghost'
+                onClick={clearSearch}
+                aria-label='Clear search and reset filters'
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {loading ? (
+          <p className='profiles-status'>Loading profiles...</p>
+        ) : (
+          <div className='grid-list'>
+            {profiles.map((profile) => (
+              <Card
+                key={profile.id}
+                title={profile.display_name || "New member"}
+                image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}
+                imageAlt={profile.display_name || "Profile image"}
+              >
+                <p>{profile.bio || "No bio yet."}</p>
+
+                <p className='profile-meta'>
+                  {profile.city
+                    ? `${profile.city}, ${profile.country}`
+                    : "Location hidden"}
+                </p>
+
+                <p className='profile-looking'>
+                  Looking for: <span>{profile.looking_for || "anyone"}</span>
+                </p>
+
+                <Link
+                  to={`/profiles/${profile.id}`}
+                  className='button button--small'
+                >
+                  View profile
+                </Link>
+              </Card>
+            ))}
+
+            {profiles.length === 0 && (
+              <p className='empty-state'>No profiles found.</p>
+            )}
+          </div>
         )}
       </div>
-
-      {/* Results */}
-      {loading ? (
-        <p>Loading profiles...</p>
-      ) : (
-        <div className="grid-list">
-          {profiles.map((profile) => (
-            <Card key={profile.id} title={profile.display_name || 'New member'}>
-              <p>{profile.bio || 'No bio yet.'}</p>
-              <p>{profile.city ? `${profile.city}, ${profile.country}` : 'Location hidden'}</p>
-              <p>Looking for: {profile.looking_for || 'anyone'}</p>
-              <Link to={`/profiles/${profile.id}`} className="button button--small">View profile</Link>
-            </Card>
-          ))}
-          {profiles.length === 0 && <p className="empty-state">No profiles found.</p>}
-        </div>
-      )}
     </section>
   );
 }

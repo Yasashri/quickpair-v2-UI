@@ -1,42 +1,215 @@
 @use "variables" as *;
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 56px;
   background-color: $navbg;
-  height: 56px;
+  border-bottom: 1px solid $border;
   box-shadow:
     rgba(0, 0, 0, 0.35) 0px 10px 30px,
     rgba(255, 255, 255, 0.04) 0px 1px inset;
-  border-bottom: 1px solid $border;
+  backdrop-filter: blur(18px);
+}
+
+.nav {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.nav__brand {
+  position: relative;
+  z-index: 120;
+}
+
+.nav__brand a {
+  display: flex;
+  align-items: center;
+}
+
+.nav__brand img {
+  width: 30px;
+  height: auto;
+  display: block;
+}
+
+.nav__brand p {
+  margin: 0 0 0 10px;
+  color: $text;
+  font-size: $font-md;
+  font-weight: 600;
+}
+
+.nav__brand span {
+  color: $secondary;
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav__links a,
+.link-button {
+  color: $text;
+  font-size: $font-sm;
+  font-weight: 600;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  transition: 180ms ease;
+}
+
+.nav__links a:hover,
+.link-button:hover {
+  color: $primary;
+}
+
+.link-button {
+  cursor: pointer;
+}
+
+.nav__toggle {
+  display: none;
+  position: relative;
+  z-index: 120;
+  width: 42px;
+  height: 42px;
+  border: 1px solid $border;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav__toggle span {
+  position: absolute;
+  left: 10px;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: $white;
+  transition:
+    top 220ms ease,
+    transform 220ms ease,
+    opacity 180ms ease;
+}
+
+.nav__toggle span:nth-child(1) {
+  top: 13px;
+}
+
+.nav__toggle span:nth-child(2) {
+  top: 20px;
+}
+
+.nav__toggle span:nth-child(3) {
+  top: 27px;
+}
+
+.nav__toggle.is-open span:nth-child(1) {
+  top: 20px;
+  transform: rotate(45deg);
+}
+
+.nav__toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav__toggle.is-open span:nth-child(3) {
+  top: 20px;
+  transform: rotate(-45deg);
+}
+
+/* TABLET + MOBILE */
+@media (max-width: #{$mobile - 1px}) {
+  .topbar {
+    min-height: 64px;
+  }
+
   .nav {
+    min-height: 64px;
+  }
+
+  .nav__brand img {
+    width: 32px;
+  }
+
+  .nav__brand p {
+    font-size: $font-mobile-lg;
+  }
+
+  .nav__toggle {
+    display: block;
+  }
+
+  .nav__links {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 16px;
+    right: 16px;
+    z-index: 110;
+
     display: flex;
-    justify-content: space-between;
-    &__brand {
-      a {
-        display: flex;
-        align-items: center;
-        img {
-          height: auto;
-          width: 30px;
-        }
-        p {
-            font-size: $font-md;
-          margin: 0 0 0 10px;
-          font-weight: 500;
-          span {
-            color: $secondary;
-          }
-        }
-      }
-    }
-    &__links {
-      display: flex;
-      align-items: center;
-      a {
-        margin-left: 32px;
-        &:hover {
-          color: $primary;
-        }
-      }
-    }
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    padding: 14px;
+    border: 1px solid $border;
+    border-radius: 18px;
+    background: $card;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px) scale(0.98);
+    pointer-events: none;
+
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease,
+      visibility 220ms ease;
+  }
+
+  .nav__links.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .nav__links a,
+  .link-button {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid $border;
+    border-radius: 14px;
+    color: $text;
+    background: rgba(255, 255, 255, 0.04);
+    text-align: left;
+    font-size: $font-mobile-base;
+  }
+
+  .nav__links a:hover,
+  .link-button:hover {
+    color: $primary;
+    background: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.32);
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 420px) {
+  .nav__links {
+    left: 12px;
+    right: 12px;
+  }
+
+  .nav__brand p {
+    font-size: $font-mobile-md;
   }
 }

@@ -1,48 +1,106 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+
   const { isAuthenticated, logout, isAdminAuthenticated, adminLogout } =
     useAuth();
 
   const isAdminArea = location.pathname.startsWith("/admin");
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+  };
+
+  const handleAdminLogout = () => {
+    adminLogout();
+    closeMenu();
+  };
+
   return (
-    <header className='topbar'>
-      <div className='container nav'>
-        <div className='nav__brand'>
-          <Link to='/'><img className="logo" src="/qplogo_no_text.png" alt="logo" /><p>Quick<span>Pair</span></p></Link>
+    <header className="topbar">
+      <div className="container nav">
+        <div className="nav__brand">
+          <Link to="/" onClick={closeMenu}>
+            <img className="logo" src="/qplogo_no_text.png" alt="QuickPair logo" />
+            <p>
+              Quick<span>Pair</span>
+            </p>
+          </Link>
         </div>
-        <nav className='nav__links'>
+
+        <button
+          type="button"
+          className={`nav__toggle ${menuOpen ? "is-open" : ""}`}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav className={`nav__links ${menuOpen ? "is-open" : ""}`}>
           {isAdminArea ? (
             <>
-              <Link to='/admin/dashboard'>Dashboard</Link>
+              <Link to="/admin/dashboard" onClick={closeMenu}>
+                Dashboard
+              </Link>
+
               {isAdminAuthenticated ? (
                 <button
-                  type='button'
-                  className='link-button'
-                  onClick={adminLogout}
+                  type="button"
+                  className="link-button"
+                  onClick={handleAdminLogout}
                 >
                   Logout
                 </button>
               ) : (
-                <Link to='/admin/login'>Admin Login</Link>
+                <Link to="/admin/login" onClick={closeMenu}>
+                  Admin Login
+                </Link>
               )}
             </>
           ) : (
             <>
-              <Link to='/profiles'>Browse</Link>
-              <Link to='/me'>My Profile</Link>
-              <Link to='/messages'>Messages</Link>
+              <Link to="/profiles" onClick={closeMenu}>
+                Browse
+              </Link>
+
+              <Link to="/me" onClick={closeMenu}>
+                My Profile
+              </Link>
+
+              <Link to="/messages" onClick={closeMenu}>
+                Messages
+              </Link>
+
               {isAuthenticated ? (
-                <button type='button' className='link-button' onClick={logout}>
+                <button
+                  type="button"
+                  className="link-button"
+                  onClick={handleLogout}
+                >
                   Logout
                 </button>
               ) : (
                 <>
-                  <Link to='/login'>Login</Link>
-                  <Link to='/register'>Register</Link>
+                  <Link to="/login" onClick={closeMenu}>
+                    Login
+                  </Link>
+
+                  <Link to="/register" onClick={closeMenu}>
+                    Register
+                  </Link>
                 </>
               )}
             </>

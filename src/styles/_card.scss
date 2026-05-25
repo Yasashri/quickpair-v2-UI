@@ -1,0 +1,115 @@
+@use "./variables.scss" as *;
+
+.card {
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid $border;
+  border-radius: 22px;
+  background: linear-gradient(
+    145deg,
+    rgba(24, 16, 52, 0.86),
+    rgba(15, 26, 46, 0.94)
+  );
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.22);
+  transition: 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(56, 189, 248, 0.28);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.3);
+}
+
+.card__image {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: $card;
+}
+
+.card__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: 220ms ease;
+}
+
+.card:hover .card__image img {
+  transform: scale(1.04);
+}
+
+.card__title {
+  margin: 0;
+  padding: 20px 22px 0;
+  color: $white;
+  font-size: $font-lg;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.card__body {
+  padding: 14px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card__body p {
+  margin: 0;
+  color: $sub-text;
+  font-size: $font-base;
+  line-height: 1.65;
+}
+
+.card__body .button {
+  width: fit-content;
+  margin-top: 8px;
+}
+
+.card__footer {
+  margin: 0 22px 22px;
+  padding-top: 16px;
+  border-top: 1px solid $border;
+  color: $muted;
+  font-size: $font-sm;
+}
+
+/* TABLET */
+@media (max-width: #{$tablet - 1px}) {
+  .card__image {
+    height: 200px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: #{$mobile - 1px}) {
+  .card {
+    border-radius: 18px;
+  }
+
+  .card__image {
+    height: 210px;
+  }
+
+  .card__title {
+    padding: 18px 18px 0;
+    font-size: $font-mobile-lg;
+  }
+
+  .card__body {
+    padding: 12px 18px 18px;
+  }
+
+  .card__body p {
+    font-size: $font-mobile-base;
+  }
+
+  .card__body .button {
+    width: 100%;
+  }
+
+  .card__footer {
+    margin: 0 18px 18px;
+  }
+}
