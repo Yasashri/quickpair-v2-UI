@@ -7,6 +7,10 @@
 @use "./my-profile";
 @use "./profile-detail";
 @use "./messages";
+@use "./admin-dashboard";
+@use "./admin-profile-details";
+@use "./admin-login";
+@use "./login";
 
 * {
   box-sizing: border-box;

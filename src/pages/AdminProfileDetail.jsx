@@ -1,41 +1,37 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import api from '../api/api';
-import Card from '../components/Card';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../api/api";
+import Card from "../components/Card";
 
 function extractResource(data) {
   if (!data) return null;
-  if (data.data && typeof data.data === 'object') return data.data;
-  if (data.profile && typeof data.profile === 'object') return data.profile;
-  if (data.user && typeof data.user === 'object') return data.user;
+  if (data.data && typeof data.data === "object") return data.data;
+  if (data.profile && typeof data.profile === "object") return data.profile;
+  if (data.user && typeof data.user === "object") return data.user;
   return data;
-}
-
-function formatFieldLabel(key) {
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function AdminProfileDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
+
       let profileData = null;
       let userData = null;
 
       try {
         const profileResponse = await api.get(`/admin/profiles/${id}`);
         profileData = extractResource(profileResponse.data);
-      } catch (error) {
+      } catch {
         try {
           const fallbackResponse = await api.get(`/profiles/${id}`);
           profileData = extractResource(fallbackResponse.data);
@@ -60,66 +56,103 @@ function AdminProfileDetail() {
   }, [id]);
 
   const handleAction = async (action) => {
-    if (action === 'reject' && !feedback.trim()) {
-      alert('Rejection feedback is required.');
+    if (action === "reject" && !feedback.trim()) {
+      alert("Rejection feedback is required.");
       return;
     }
 
-    if (!confirm(`Are you sure you want to ${action} this profile?`)) return;
+    if (!confirm(`Are you sure you want to ${action} this profile?`)) {
+      return;
+    }
 
     setActionLoading(true);
+
     try {
-      const body = action === 'reject' ? { feedback: feedback.trim() } : {};
+      const body = action === "reject" ? { feedback: feedback.trim() } : {};
+
       await api.post(`/admin/profiles/${id}/${action}`, body);
+
       alert(`Profile ${action}ed successfully.`);
-      navigate('/admin/dashboard');
+      navigate("/admin/dashboard");
     } catch (error) {
-      alert(`Failed to ${action} profile: ${error.response?.data?.message || error.message}`);
+      alert(
+        `Failed to ${action} profile: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     } finally {
       setActionLoading(false);
     }
   };
 
-  const profileEntries = profile
-    ? Object.entries(profile).filter(([, value]) => value !== null && value !== undefined && value !== '')
-    : [];
-
-  const knownProfileKeys = [
-    'display_name',
-    'bio',
-    'age',
-    'city',
-    'country',
-    'occupation',
-    'relationship_goal',
-    'interests',
-    'status',
-    'created_at',
-  ];
-
-  const extraProfileEntries = profileEntries.filter(([key]) => !knownProfileKeys.includes(key));
+  const getProfileImage = () => {
+    return (
+      profile?.profile_image_url ||
+      profile?.image_url ||
+      (profile?.profile_image_path
+        ? `${import.meta.env.VITE_API_URL?.replace("/api", "")}/storage/${
+            profile.profile_image_path
+          }`
+        : null) ||
+      `https://i.pravatar.cc/500?img=${(Number(profile?.id) % 70) + 1}`
+    );
+  };
 
   return (
-    <section className="page-card admin-page">
+    <section className="page-card admin-profile-page">
       <div className="page-header">
-        <h1>Profile Review</h1>
-        <button className="button button--secondary" onClick={() => navigate('/admin/dashboard')}>
+        <div>
+          <span className="eyebrow">Admin review</span>
+          <h1>Profile Review</h1>
+          <p>Review profile details, approve, reject, or suspend the user.</p>
+        </div>
+
+        <button
+          className="button button--secondary"
+          onClick={() => navigate("/admin/dashboard")}
+        >
           Back to Dashboard
         </button>
       </div>
 
       {loading ? (
-        <p>Loading profile details...</p>
+        <p className="admin-status">Loading profile details...</p>
       ) : !profile ? (
-        <div>
+        <div className="admin-status">
           <p>Profile not found.</p>
-          <button className="button" onClick={() => navigate('/admin/dashboard')}>
+
+          <button
+            className="button"
+            onClick={() => navigate("/admin/dashboard")}
+          >
             Back to Dashboard
           </button>
         </div>
       ) : (
-        <Card title={`${profile.display_name || profile.email || 'Profile'} Details`}>
+        <Card title={`${profile.display_name || profile.email || "Profile"} Details`}>
           <div className="profile-review-container">
+            <div className="profile-review-image">
+              <img src={getProfileImage()} alt={profile.display_name || "Profile image"} />
+
+              <div className="profile-review-image__content">
+                <span
+                  className={`status-badge ${
+                    profile.status === "rejected"
+                      ? "is-rejected"
+                      : profile.status === "pending"
+                        ? "is-pending"
+                        : "is-approved"
+                  }`}
+                >
+                  {profile.status || "Unknown"}
+                </span>
+
+                <h2>{profile.display_name || "Profile"}</h2>
+
+                <p>{profile.bio || "No biography available."}</p>
+              </div>
+            </div>
+
             <dl className="profile-details">
               {user?.email && (
                 <div>
@@ -152,7 +185,7 @@ function AdminProfileDetail() {
               {(profile.city || profile.country) && (
                 <div>
                   <dt>Location</dt>
-                  <dd>{[profile.city, profile.country].filter(Boolean).join(', ')}</dd>
+                  <dd>{[profile.city, profile.country].filter(Boolean).join(", ")}</dd>
                 </div>
               )}
 
@@ -163,10 +196,31 @@ function AdminProfileDetail() {
                 </div>
               )}
 
+              {profile.education && (
+                <div>
+                  <dt>Education</dt>
+                  <dd>{profile.education}</dd>
+                </div>
+              )}
+
               {profile.relationship_goal && (
                 <div>
                   <dt>Relationship Goal</dt>
                   <dd>{profile.relationship_goal}</dd>
+                </div>
+              )}
+
+              {profile.looking_for && (
+                <div>
+                  <dt>Looking For</dt>
+                  <dd>{profile.looking_for}</dd>
+                </div>
+              )}
+
+              {profile.gender && (
+                <div>
+                  <dt>Gender</dt>
+                  <dd>{profile.gender}</dd>
                 </div>
               )}
 
@@ -184,8 +238,15 @@ function AdminProfileDetail() {
                 </div>
               )}
 
-              <div>
-                <dt>Rejection feedback</dt>
+              {profile.created_at && (
+                <div>
+                  <dt>Created At</dt>
+                  <dd>{new Date(profile.created_at).toLocaleString()}</dd>
+                </div>
+              )}
+
+              <div className="feedback-field">
+                <dt>Rejection Feedback</dt>
                 <dd>
                   <textarea
                     value={feedback}
@@ -199,17 +260,31 @@ function AdminProfileDetail() {
             </dl>
 
             <div className="admin-actions-detailed">
-              {profile.status === 'pending' && (
-                <button className="button button--success" onClick={() => handleAction('approve')} disabled={actionLoading}>
-                  {actionLoading ? 'Processing...' : 'Approve Profile'}
+              {profile.status === "pending" && (
+                <button
+                  className="button button--success"
+                  onClick={() => handleAction("approve")}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? "Processing..." : "Approve Profile"}
                 </button>
               )}
-              <button className="button button--secondary" onClick={() => handleAction('reject')} disabled={actionLoading}>
-                {actionLoading ? 'Processing...' : 'Reject Profile'}
+
+              <button
+                className="button button--secondary"
+                onClick={() => handleAction("reject")}
+                disabled={actionLoading}
+              >
+                {actionLoading ? "Processing..." : "Reject Profile"}
               </button>
-              {user?.status !== 'suspended' && user?.status && (
-                <button className="button button--danger" onClick={() => handleAction('suspend')} disabled={actionLoading}>
-                  {actionLoading ? 'Processing...' : 'Suspend User'}
+
+              {user?.status !== "suspended" && user?.status && (
+                <button
+                  className="button button--danger"
+                  onClick={() => handleAction("suspend")}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? "Processing..." : "Suspend User"}
                 </button>
               )}
             </div>
