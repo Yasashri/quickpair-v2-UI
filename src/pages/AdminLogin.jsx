@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import ScrollToTop from "../components/ScrollToTop";
 
 function AdminLogin() {
   const [form, setForm] = useState({ login: "", password: "" });
@@ -21,8 +22,9 @@ function AdminLogin() {
   };
 
   return (
-    <section className="form-card admin-login-card">
-      <span className="form-eyebrow">Admin access</span>
+    <section className='form-card admin-login-card'>
+      <ScrollToTop />
+      <span className='form-eyebrow'>Admin access</span>
 
       <h1>Admin login</h1>
 
@@ -34,7 +36,7 @@ function AdminLogin() {
           <input
             value={form.login}
             onChange={(e) => setForm({ ...form, login: e.target.value })}
-            type="email"
+            type='email'
             required
           />
         </label>
@@ -44,14 +46,14 @@ function AdminLogin() {
           <input
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            type="password"
+            type='password'
             required
           />
         </label>
 
-        {error && <p className="form-error">{error}</p>}
+        {error && <p className='form-error'>{error}</p>}
 
-        <button type="submit" className="button">
+        <button type='submit' className='button'>
           Sign in
         </button>
       </form>
