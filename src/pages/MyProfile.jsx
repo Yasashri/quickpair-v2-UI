@@ -254,7 +254,7 @@ function MyProfile() {
             />
           </label>
 
-          <label>
+       {/*    <label>
             Goal
             <input
               value={data.relationship_goal}
@@ -262,7 +262,7 @@ function MyProfile() {
                 setData({ ...data, relationship_goal: e.target.value })
               }
             />
-          </label>
+          </label> */}
 
           <label>
             Bio
