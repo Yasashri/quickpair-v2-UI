@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
+import ScrollToTop from "../components/ScrollToTop";
 
 function Profiles() {
   const [profiles, setProfiles] = useState([]);
@@ -12,6 +13,7 @@ function Profiles() {
   const [gender, setGender] = useState("all");
 
   const debounceDelay = 500;
+
 
   useEffect(() => {
     setLoading(true);
@@ -48,6 +50,7 @@ function Profiles() {
 
   return (
     <section className='container profiles-page'>
+      <ScrollToTop />
       <div className='page-card'>
         <div className='page-header'>
           <span className='eyebrow'>Find your match</span>

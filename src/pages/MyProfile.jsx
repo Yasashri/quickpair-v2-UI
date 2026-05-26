@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import Card from "../components/Card";
+import ScrollToTop from "../components/ScrollToTop";
 
 function MyProfile() {
   const [profile, setProfile] = useState(null);
-  const [previewImage, setPreviewImage] = useState("/images/default-profile.jpg");
+  const [previewImage, setPreviewImage] = useState("/avatar.jpg");
+
   const [data, setData] = useState({
     first_name: "",
     last_name: "",
@@ -23,6 +25,40 @@ function MyProfile() {
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  const getProfileStatus = () => {
+    if (!profile) {
+      return {
+        className: "is-new",
+        label: "No profile yet",
+        text: "Create your dating profile and submit it for admin review.",
+      };
+    }
+
+    if (profile.status === "approved") {
+      return {
+        className: "is-approved",
+        label: "Approved",
+        text: "Your profile is approved and visible to other users.",
+      };
+    }
+
+    if (profile.status === "rejected") {
+      return {
+        className: "is-rejected",
+        label: "Rejected",
+        text:
+          profile.admin_feedback ||
+          "Your profile was rejected. Please update it and submit again.",
+      };
+    }
+
+    return {
+      className: "is-pending",
+      label: "Submitted for approval",
+      text: "Your profile is waiting for admin review.",
+    };
+  };
 
   useEffect(() => {
     api.get("/my-profile").then((response) => {
@@ -75,6 +111,8 @@ function MyProfile() {
     try {
       const usesFileUpload = data.profile_image instanceof File;
 
+      let response;
+
       if (usesFileUpload) {
         const payload = new FormData();
 
@@ -88,7 +126,7 @@ function MyProfile() {
           payload.append("_method", "PUT");
         }
 
-        await api.post("/my-profile", payload, {
+        response = await api.post("/my-profile", payload, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -98,10 +136,14 @@ function MyProfile() {
         delete payload.profile_image;
 
         if (profile) {
-          await api.put("/my-profile", payload);
+          response = await api.put("/my-profile", payload);
         } else {
-          await api.post("/my-profile", payload);
+          response = await api.post("/my-profile", payload);
         }
+      }
+
+      if (response?.data?.profile) {
+        setProfile(response.data.profile);
       }
 
       setMessage("Profile submitted for review.");
@@ -119,12 +161,24 @@ function MyProfile() {
     }
   };
 
+  const status = getProfileStatus();
+
   return (
-    <section className="page-card">
+    <section className='page-card'>
+      <ScrollToTop />
+
       <Card title={profile ? "Update your profile" : "Create your profile"}>
-        <form className="profile-form" onSubmit={handleSubmit}>
-          <div className="profile-image-preview">
-            <img src={previewImage} alt="Profile preview" />
+        <form className='profile-form' onSubmit={handleSubmit}>
+          <div className={`profile-status-card ${status.className}`}>
+            <span>{status.label}</span>
+            <p>{status.text}</p>
+          </div>
+
+          <div className='profile-image-preview'>
+            <img
+              src={previewImage ? previewImage : "/avatar.jpg"}
+              alt='Profile preview'
+            />
 
             <div>
               <h3>Profile photo</h3>
@@ -138,14 +192,14 @@ function MyProfile() {
           <label>
             Profile image
             <input
-              type="file"
-              accept="image/*"
-              name="profile_image"
+              type='file'
+              accept='image/*'
+              name='profile_image'
               onChange={handleImageChange}
             />
           </label>
 
-          <div className="form-grid">
+          <div className='form-grid'>
             <label>
               First name
               <input
@@ -184,8 +238,8 @@ function MyProfile() {
               <input
                 value={data.age}
                 onChange={(e) => setData({ ...data, age: e.target.value })}
-                type="number"
-                min="18"
+                type='number'
+                min='18'
                 required
               />
             </label>
@@ -196,9 +250,9 @@ function MyProfile() {
                 value={data.gender}
                 onChange={(e) => setData({ ...data, gender: e.target.value })}
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value='male'>Male</option>
+                <option value='female'>Female</option>
+                <option value='other'>Other</option>
               </select>
             </label>
 
@@ -210,10 +264,10 @@ function MyProfile() {
                   setData({ ...data, looking_for: e.target.value })
                 }
               >
-                <option value="any">Anyone</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value='any'>Anyone</option>
+                <option value='male'>Male</option>
+                <option value='female'>Female</option>
+                <option value='other'>Other</option>
               </select>
             </label>
           </div>
@@ -238,9 +292,7 @@ function MyProfile() {
             Occupation
             <input
               value={data.occupation}
-              onChange={(e) =>
-                setData({ ...data, occupation: e.target.value })
-              }
+              onChange={(e) => setData({ ...data, occupation: e.target.value })}
             />
           </label>
 
@@ -248,35 +300,27 @@ function MyProfile() {
             Education
             <input
               value={data.education}
-              onChange={(e) =>
-                setData({ ...data, education: e.target.value })
-              }
+              onChange={(e) => setData({ ...data, education: e.target.value })}
             />
           </label>
-
-       {/*    <label>
-            Goal
-            <input
-              value={data.relationship_goal}
-              onChange={(e) =>
-                setData({ ...data, relationship_goal: e.target.value })
-              }
-            />
-          </label> */}
 
           <label>
             Bio
             <textarea
               value={data.bio}
               onChange={(e) => setData({ ...data, bio: e.target.value })}
-              rows="5"
+              rows='5'
             />
           </label>
 
-          {message && <p className="form-note">{message}</p>}
+          {message && <p className='form-note'>{message}</p>}
 
-          <button type="submit" className="button" disabled={saving}>
-            {saving ? "Saving..." : profile ? "Update profile" : "Create profile"}
+          <button type='submit' className='button' disabled={saving}>
+            {saving
+              ? "Saving..."
+              : profile
+                ? "Update profile"
+                : "Create profile"}
           </button>
         </form>
       </Card>

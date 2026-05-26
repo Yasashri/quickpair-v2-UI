@@ -1,0 +1,244 @@
+@use "./variables.scss" as *;
+
+@keyframes status-pop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes status-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.3);
+  }
+
+  70% {
+    box-shadow: 0 0 0 12px rgba(56, 189, 248, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+.status-message {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid $border;
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(56, 189, 248, 0.1),
+      transparent 34%
+    ),
+    rgba(15, 26, 46, 0.88);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24);
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    animation:
+      status-pop 360ms ease,
+      status-pulse 1400ms ease 420ms;
+
+    svg {
+      width: 52px;
+      height: 52px;
+      overflow: visible;
+    }
+
+    .status-message__circle {
+      fill: transparent;
+      stroke-width: 3;
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
+      animation: status-draw 560ms ease forwards;
+    }
+
+    .status-message__check,
+    .status-message__cross,
+    .status-message__mark,
+    .status-message__dot {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 4;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: status-draw 420ms ease 420ms forwards;
+    }
+
+    .status-message__dot {
+      stroke-width: 7;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+
+    &.is-success {
+      background: rgba(56, 189, 248, 0.1);
+
+      .status-message__circle,
+      .status-message__check {
+        stroke: $primary;
+      }
+    }
+
+    &.is-error {
+      background: rgba(255, 79, 123, 0.1);
+      animation:
+        status-pop 360ms ease,
+        status-pulse 1400ms ease 420ms;
+
+      .status-message__circle,
+      .status-message__cross {
+        stroke: $secondary;
+      }
+    }
+
+    &.is-warning {
+      background: rgba(255, 255, 255, 0.08);
+
+      .status-message__circle,
+      .status-message__mark,
+      .status-message__dot {
+        stroke: $white;
+      }
+    }
+
+    &.is-info {
+      background: rgba(179, 174, 207, 0.1);
+
+      .status-message__circle,
+      .status-message__mark,
+      .status-message__dot {
+        stroke: $sub-text;
+      }
+    }
+  }
+
+  &__content {
+    min-width: 0;
+
+    h3 {
+      margin: 0 0 8px;
+      color: $white;
+      font-size: $font-lg;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0;
+      color: $sub-text;
+      font-size: $font-base;
+      line-height: 1.65;
+    }
+  }
+
+  &__button {
+    width: fit-content;
+    margin-top: 16px;
+  }
+
+  &--success {
+    border-color: rgba(56, 189, 248, 0.28);
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(56, 189, 248, 0.14),
+        transparent 34%
+      ),
+      rgba(15, 26, 46, 0.88);
+  }
+
+  &--error {
+    border-color: rgba(255, 79, 123, 0.3);
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(255, 79, 123, 0.14),
+        transparent 34%
+      ),
+      rgba(15, 26, 46, 0.88);
+  }
+
+  &--warning {
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  &--info {
+    border-color: rgba(179, 174, 207, 0.18);
+  }
+}
+
+/* MOBILE */
+@media (max-width: #{$mobile - 1px}) {
+  .status-message {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    padding: 22px 18px;
+    border-radius: 20px;
+
+    &__icon {
+      width: 58px;
+      height: 58px;
+
+      svg {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    &__content {
+      h3 {
+        font-size: $font-mobile-lg;
+      }
+
+      p {
+        font-size: $font-mobile-base;
+        line-height: 1.6;
+      }
+    }
+
+    &__button {
+      width: 100%;
+    }
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 420px) {
+  .status-message {
+    padding: 20px 16px;
+
+    &__content {
+      h3 {
+        font-size: $font-mobile-md;
+      }
+    }
+  }
+}

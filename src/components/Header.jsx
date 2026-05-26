@@ -6,7 +6,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
-  const { isAuthenticated, logout, isAdminAuthenticated, adminLogout } =
+  const { isAuthenticated, logout, isAdminAuthenticated, adminLogout, isProfileApproved } =
     useAuth();
 
   const isAdminArea = location.pathname.startsWith("/admin");

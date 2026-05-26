@@ -11,6 +11,8 @@
 @use "./admin-profile-details";
 @use "./admin-login";
 @use "./login";
+@use "./footer";
+@use "./status-message";
 
 * {
   box-sizing: border-box;

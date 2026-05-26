@@ -3,10 +3,11 @@ import { useParams } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import useAuth from "../hooks/useAuth";
+import ScrollToTop from "../components/ScrollToTop";
 
 function ProfileDetail() {
   const { id } = useParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isProfileApproved, hasProfile } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,9 +29,7 @@ function ProfileDetail() {
     profile?.status === "approved" || profile?.approved === true;
 
   const profileImage =
-    profile?.profile_image_url ||
-    profile?.profile_image ||
-    `https://i.pravatar.cc/500?img=${(Number(id) % 70) + 1}`;
+    profile?.profile_image_url || profile?.profile_image || `/avatar.jpg`;
 
   useEffect(() => {
     setLoading(true);
@@ -46,7 +45,14 @@ function ProfileDetail() {
 
   useEffect(() => {
     const loadConversation = async () => {
-      if (!isAuthenticated || isOwnProfile || !profileUserId || !isApproved) {
+      if (
+        !isAuthenticated ||
+        !isProfileApproved ||
+        !hasProfile ||
+        isOwnProfile ||
+        !profileUserId ||
+        !isApproved
+      ) {
         setConversation([]);
         return;
       }
@@ -66,7 +72,15 @@ function ProfileDetail() {
     if (profile) {
       loadConversation();
     }
-  }, [profile, profileUserId, isAuthenticated, isOwnProfile, isApproved]);
+  }, [
+    profile,
+    profileUserId,
+    isAuthenticated,
+    isOwnProfile,
+    isApproved,
+    isProfileApproved,
+    hasProfile,
+  ]);
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -112,6 +126,7 @@ function ProfileDetail() {
 
   return (
     <section className='page-card profile-page'>
+      <ScrollToTop />
       <Card title={profile.display_name || "Profile"}>
         <div className='profile-hero'>
           <img
@@ -184,7 +199,13 @@ function ProfileDetail() {
             </p>
           ) : !isAuthenticated ? (
             <p className='message-notice'>
-              Please log in to message this user.
+              Please log in to message {profile.display_name}.
+            </p>
+          ) : !hasProfile ? (
+            <p className='message-notice'>Please create your dating profile to message {profile.display_name}.</p>
+          ) : !isProfileApproved ? (
+            <p className='message-notice'>
+              Wait for admin approval to start messaging so ypu can share your thoughts with {profile.display_name}.
             </p>
           ) : (
             <>

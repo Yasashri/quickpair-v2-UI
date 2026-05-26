@@ -53,14 +53,14 @@ function Home() {
           </div>
         </div>
 
-        <div className="hero-preview">
+       {/*  <div className="hero-preview">
           <Card title="Featured profile">
             <p>
               Enjoy meaningful connections and a friendly community designed for
               real dating.
             </p>
           </Card>
-        </div>
+        </div> */}
       </div>
     </section>
   );

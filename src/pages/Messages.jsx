@@ -1,21 +1,66 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
+import StatusMessage from "../components/StatusMessage";
+import ScrollToTop from "../components/ScrollToTop";
 
 function Messages() {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusError, setStatusError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
+    setStatusError(null);
+
     api
       .get("/messages")
       .then((response) => {
         setThreads(response.data.data || []);
-        setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, []);
+      .catch((error) => {
+        const status = error?.response?.status;
+        const message = error?.response?.data?.message;
+
+        if (status === 401) {
+          setStatusError({
+            type: "error",
+            title: "Login required",
+            message: "Please log in to view your conversations.",
+            buttonText: "Go to login",
+            action: () => navigate("/login"),
+          });
+          return;
+        }
+
+        if (status === 403) {
+          setStatusError({
+            type: "error",
+            title: "Profile approval required",
+            message:
+              
+              "You need a complete and approved profile to use this feature. If you have completed your profile please wait for our admins to approve you",
+            buttonText: "Go to your profile",
+            action: () => navigate("/me"),
+          });
+          return;
+        }
+
+        setStatusError({
+          type: "error",
+          title: "Could not load messages",
+          message: message || "Something went wrong. Please try again later.",
+          buttonText: "Try again",
+          action: () => window.location.reload(),
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [navigate]);
 
   const getDisplayName = (thread) => {
     return (
@@ -37,9 +82,10 @@ function Messages() {
   };
 
   return (
-    <section className="page-card messages-page">
-      <div className="page-header">
-        <span className="eyebrow">Your inbox</span>
+    <section className='page-card messages-page'>
+      <ScrollToTop />
+      <div className='page-header'>
+        <span className='eyebrow'>Your inbox</span>
         <h1>Your conversations</h1>
         <p>
           These are the people you have messaged. Click a person to open their
@@ -47,11 +93,19 @@ function Messages() {
         </p>
       </div>
 
-      <Card title="Messaged profiles">
+      <Card title='Messaged profiles'>
         {loading ? (
-          <p className="messages-status">Loading conversations...</p>
+          <p className='messages-status'>Loading conversations...</p>
+        ) : statusError ? (
+          <StatusMessage
+            type={statusError.type}
+            title={statusError.title}
+            message={statusError.message}
+            buttonText={statusError.buttonText}
+            onButtonClick={statusError.action}
+          />
         ) : (
-          <div className="messages-list">
+          <div className='messages-list'>
             {threads.length ? (
               threads.map((thread) => {
                 const displayName = getDisplayName(thread);
@@ -62,12 +116,12 @@ function Messages() {
                   <Link
                     key={thread.id}
                     to={profileId ? `/profiles/${profileId}#messages` : "#"}
-                    className="message-thread"
+                    className='message-thread'
                   >
                     <img src={profileImage} alt={displayName} />
 
-                    <div className="message-thread__content">
-                      <div className="message-thread__top">
+                    <div className='message-thread__content'>
+                      <div className='message-thread__top'>
                         <strong>{displayName}</strong>
 
                         {thread.created_at && (
@@ -86,7 +140,7 @@ function Messages() {
                 );
               })
             ) : (
-              <p className="empty-state">No conversations yet.</p>
+              <p className='empty-state'>No conversations yet.</p>
             )}
           </div>
         )}

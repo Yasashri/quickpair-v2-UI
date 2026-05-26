@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import ScrollToTop from "../components/ScrollToTop";
 
 function Login() {
   const [form, setForm] = useState({ login: "", password: "" });
@@ -22,6 +23,7 @@ function Login() {
 
   return (
     <section className="form-card login-card">
+      <ScrollToTop />
       <span className="form-eyebrow">Welcome back</span>
 
       <h1>Login</h1>
