@@ -4,6 +4,7 @@ import api from "../api/api";
 import Card from "../components/Card";
 import useAuth from "../hooks/useAuth";
 import ScrollToTop from "../components/ScrollToTop";
+import { formatLastSeen } from "../utils/date";
 
 function ProfileDetail() {
   const { id } = useParams();
@@ -15,12 +16,16 @@ function ProfileDetail() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [conversationLoading, setConversationLoading] = useState(false);
+  const [otherUserStatus, setOtherUserStatus] = useState(null);
 
   const profileUserId =
     profile?.user?.id ||
     profile?.user_id ||
     profile?.owner_id ||
     profile?.author_id;
+
+  const isOnline = otherUserStatus ? otherUserStatus.is_online : profile?.user?.is_online;
+  const lastSeenAt = otherUserStatus ? otherUserStatus.last_seen_at : profile?.user?.last_seen_at;
 
   const isOwnProfile = Boolean(
     user?.id && profileUserId && user.id === profileUserId,
@@ -44,7 +49,9 @@ function ProfileDetail() {
   }, [id]);
 
   useEffect(() => {
-    const loadConversation = async () => {
+    let intervalId = null;
+
+    const loadConversation = async (showLoading = true) => {
       if (
         !isAuthenticated ||
         !isProfileApproved ||
@@ -54,24 +61,45 @@ function ProfileDetail() {
         !isApproved
       ) {
         setConversation([]);
+        setOtherUserStatus(null);
         return;
       }
 
-      setConversationLoading(true);
+      if (showLoading) {
+        setConversationLoading(true);
+      }
 
       try {
         const response = await api.get(`/messages/${profileUserId}`);
         setConversation(response.data.messages || []);
+        if (response.data.other_user) {
+          setOtherUserStatus(response.data.other_user);
+        }
       } catch {
-        setConversation([]);
+        if (showLoading) {
+          setConversation([]);
+        }
       } finally {
-        setConversationLoading(false);
+        if (showLoading) {
+          setConversationLoading(false);
+        }
       }
     };
 
     if (profile) {
-      loadConversation();
+      loadConversation(true);
+
+      // Refresh conversation and status every 30 seconds
+      intervalId = setInterval(() => {
+        loadConversation(false);
+      }, 30000);
     }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [
     profile,
     profileUserId,
@@ -101,6 +129,9 @@ function ProfileDetail() {
 
       const response = await api.get(`/messages/${profileUserId}`);
       setConversation(response.data.messages || []);
+      if (response.data.other_user) {
+        setOtherUserStatus(response.data.other_user);
+      }
     } catch {
       // ignore send error for now
     } finally {
@@ -135,11 +166,20 @@ function ProfileDetail() {
           />
 
           <div className='profile-hero__content'>
-            <span
-              className={`profile-badge ${isApproved ? "is-approved" : ""}`}
-            >
-              {isApproved ? "Approved profile" : profile.status || "Pending"}
-            </span>
+            <div className="profile-online-container">
+              <span
+                className={`profile-badge ${isApproved ? "is-approved" : ""}`}
+              >
+                {isApproved ? "Approved profile" : profile.status || "Pending"}
+              </span>
+
+              {(isOnline !== undefined || lastSeenAt) && (
+                <span className={`status-indicator-badge ${isOnline ? 'status-indicator-badge--online' : 'status-indicator-badge--offline'}`}>
+                  {isOnline && <span className="status-badge-dot" />}
+                  {isOnline ? 'Online' : `Last seen: ${formatLastSeen(lastSeenAt)}`}
+                </span>
+              )}
+            </div>
 
             <h2>{profile.display_name || "New member"}</h2>
 
@@ -188,7 +228,18 @@ function ProfileDetail() {
         </dl>
       </Card>
       <div id='messages' className='profile-messages-section'>
-        <Card title='Messages'>
+        <Card
+          title={
+            <div className="messages-card-title">
+              <span>Messages</span>
+              {(isOnline !== undefined || lastSeenAt) && (
+                <span className={`chat-status-indicator ${isOnline ? 'online' : 'offline'}`}>
+                  {isOnline ? 'Online' : `Active ${formatLastSeen(lastSeenAt)}`}
+                </span>
+              )}
+            </div>
+          }
+        >
           {!isApproved ? (
             <p className='message-notice'>
               This profile is not approved yet. Messaging is unavailable.

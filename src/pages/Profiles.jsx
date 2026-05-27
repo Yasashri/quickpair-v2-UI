@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
+import { formatLastSeen } from "../utils/date";
 
 function Profiles() {
   const [profiles, setProfiles] = useState([]);
@@ -113,7 +114,14 @@ function Profiles() {
             {profiles.map((profile) => (
               <Card
                 key={profile.id}
-                title={profile.display_name || "New member"}
+                title={
+                  <div className="profile-card-title">
+                    <span>{profile.display_name || "New member"}</span>
+                    {profile.user?.is_online && (
+                      <span className="online-indicator-dot" title="Online" />
+                    )}
+                  </div>
+                }
                 image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}
                 imageAlt={profile.display_name || "Profile image"}
               >
@@ -123,6 +131,18 @@ function Profiles() {
                   {profile.city
                     ? `${profile.city}, ${profile.country}`
                     : "Location hidden"}
+                </p>
+
+                <p className='active-status'>
+                  {profile.user?.is_online ? (
+                    <span className="active-status--online">Online</span>
+                  ) : (
+                    profile.user?.last_seen_at && (
+                      <span className="active-status--offline">
+                        Active {formatLastSeen(profile.user.last_seen_at)}
+                      </span>
+                    )
+                  )}
                 </p>
 
                 <p className='profile-looking'>

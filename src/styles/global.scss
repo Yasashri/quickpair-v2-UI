@@ -76,3 +76,197 @@ a {
 .muted {
   color: $muted;
 }
+
+// Online Status Styles
+$success: #10b981;
+$success-glow: rgba(16, 185, 129, 0.4);
+
+.online-indicator-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: $success;
+  box-shadow: 0 0 8px $success-glow;
+  margin-left: 8px;
+  position: relative;
+  top: -1px;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 4px $success-glow;
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.7);
+  }
+}
+
+// Active status text
+.active-status {
+  font-size: $font-xs !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px !important;
+
+  &--online {
+    color: $success !important;
+  }
+
+  &--offline {
+    color: $muted !important;
+  }
+}
+
+// Profile card title wrapper
+.profile-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Glassmorphic status badges
+.status-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: $font-xs;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  &--online {
+    color: $success;
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.1);
+
+    .status-badge-dot {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: $success;
+      box-shadow: 0 0 6px $success;
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+  }
+
+  &--offline {
+    color: $muted;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.profile-online-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+// Thread avatar container
+.message-thread__avatar-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+
+  img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 18px;
+  }
+
+  .avatar-online-dot {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background-color: $success;
+    border: 3px solid #0f1a2e; // matches $card bg
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    animation: pulse-glow 2s infinite ease-in-out;
+  }
+}
+
+// Message list top status
+.message-thread__status-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.status-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &--online {
+    color: $success;
+  }
+
+  &--offline {
+    color: $muted;
+  }
+}
+
+// Chat section header title and status
+.messages-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  span:first-child {
+    font-size: $font-lg;
+    font-weight: 700;
+  }
+
+  .chat-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $font-sm;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    &.online {
+      color: $success;
+      border-color: rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.05);
+
+      &::before {
+        content: "";
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: $success;
+        box-shadow: 0 0 6px $success;
+        animation: pulse-glow 2s infinite ease-in-out;
+      }
+    }
+
+    &.offline {
+      color: $muted;
+    }
+  }
+}
+

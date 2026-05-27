@@ -4,6 +4,7 @@ import api from "../api/api";
 import Card from "../components/Card";
 import StatusMessage from "../components/StatusMessage";
 import ScrollToTop from "../components/ScrollToTop";
+import { formatLastSeen } from "../utils/date";
 
 function Messages() {
   const [threads, setThreads] = useState([]);
@@ -112,32 +113,50 @@ function Messages() {
                 const profileId = getProfileId(thread);
                 const profileImage = getProfileImage(thread);
 
-                return (
-                  <Link
-                    key={thread.id}
-                    to={profileId ? `/profiles/${profileId}#messages` : "#"}
-                    className='message-thread'
-                  >
-                    <img src={profileImage} alt={displayName} />
+                 return (
+                   <Link
+                     key={thread.id}
+                     to={profileId ? `/profiles/${profileId}#messages` : "#"}
+                     className='message-thread'
+                   >
+                     <div className="message-thread__avatar-container">
+                       <img src={profileImage} alt={displayName} />
+                       {thread.other_user?.is_online && (
+                         <span className="avatar-online-dot" title="Online" />
+                       )}
+                     </div>
 
-                    <div className='message-thread__content'>
-                      <div className='message-thread__top'>
-                        <strong>{displayName}</strong>
+                     <div className='message-thread__content'>
+                       <div className='message-thread__top'>
+                         <div>
+                           <strong>{displayName}</strong>
+                           <div className="message-thread__status-container">
+                             {thread.other_user?.is_online ? (
+                               <span className="status-text status-text--online">Online</span>
+                             ) : (
+                               thread.other_user?.last_seen_at && (
+                                 <span className="status-text status-text--offline">
+                                   Active {formatLastSeen(thread.other_user.last_seen_at)}
+                                 </span>
+                               )
+                             )}
+                           </div>
+                         </div>
 
-                        {thread.created_at && (
-                          <time>
-                            {new Date(thread.created_at).toLocaleDateString()}
-                          </time>
-                        )}
-                      </div>
+                         {thread.created_at && (
+                           <time>
+                             {new Date(thread.created_at).toLocaleDateString()}
+                           </time>
+                         )}
+                       </div>
 
-                      <span>
-                        {thread.body?.slice(0, 70) || "New conversation"}
-                        {thread.body?.length > 70 ? "..." : ""}
-                      </span>
-                    </div>
-                  </Link>
-                );
+                       <span>
+                         {thread.body?.slice(0, 70) || "New conversation"}
+                         {thread.body?.length > 70 ? "..." : ""}
+                       </span>
+                     </div>
+                   </Link>
+                 );
               })
             ) : (
               <p className='empty-state'>No conversations yet.</p>
