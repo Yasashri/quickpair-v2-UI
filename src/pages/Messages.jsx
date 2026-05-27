@@ -1,15 +1,18 @@
+
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import StatusMessage from "../components/StatusMessage";
 import ScrollToTop from "../components/ScrollToTop";
 import { formatLastSeen } from "../utils/date";
+import ConversationView from "../components/ConversationView";
 
 function Messages() {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusError, setStatusError] = useState(null);
+  const [selectedThread, setSelectedThread] = useState(null);
 
   const navigate = useNavigate();
 
@@ -94,76 +97,77 @@ function Messages() {
         </p>
       </div>
 
-      <Card title='Messaged profiles'>
-        {loading ? (
-          <p className='messages-status'>Loading conversations...</p>
-        ) : statusError ? (
-          <StatusMessage
-            type={statusError.type}
-            title={statusError.title}
-            message={statusError.message}
-            buttonText={statusError.buttonText}
-            onButtonClick={statusError.action}
-          />
-        ) : (
-          <div className='messages-list'>
-            {threads.length ? (
-              threads.map((thread) => {
-                const displayName = getDisplayName(thread);
-                const profileId = getProfileId(thread);
-                const profileImage = getProfileImage(thread);
+      {selectedThread ? (
+        <ConversationView thread={selectedThread} onClose={() => setSelectedThread(null)} />
+      ) : (
+        <Card title='Messaged profiles'>
+          {loading ? (
+            <p className='messages-status'>Loading conversations...</p>
+          ) : statusError ? (
+            <StatusMessage
+              type={statusError.type}
+              title={statusError.title}
+              message={statusError.message}
+              buttonText={statusError.buttonText}
+              onButtonClick={statusError.action}
+            />
+          ) : (
+            <div className='messages-list'>
+              {threads.length ? (
+                threads.map((thread) => {
+                  const displayName = getDisplayName(thread);
+                  const profileImage = getProfileImage(thread);
+                  const isActive = selectedThread && selectedThread.id === thread.id;
+                  return (
+                    <div
+                      key={thread.id}
+                      className={`message-thread${isActive ? ' active' : ''}`}
+                      onClick={() => setSelectedThread(thread)}
+                      role='button'
+                      tabIndex={0}
+                    >
+                      <div className='message-thread__avatar-container'>
+                        <img src={profileImage} alt={displayName} />
+                        {thread.other_user?.is_online && (
+                          <span className='avatar-online-dot' title='Online' />
+                        )}
+                      </div>
+                      <div className='message-thread__content'>
+                        <div className='message-thread__top'>
+                          <div>
+                            <strong>{displayName}</strong>
+                            <div className='message-thread__status-container'>
+                              {thread.other_user?.is_online ? (
+                                <span className='status-text status-text--online'>Online</span>
+                              ) : (
+                                thread.other_user?.last_seen_at && (
+                                  <span className='status-text status-text--offline'>
+                                    Active {formatLastSeen(thread.other_user.last_seen_at)}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          </div>
+                          {thread.created_at && (
+                            <time>{new Date(thread.created_at).toLocaleDateString()}</time>
+                          )}
+                        </div>
+                        <span>
+                          {thread.body?.slice(0, 70) || 'New conversation'}
+                          {thread.body?.length > 70 ? '...' : ''}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className='empty-state'>No conversations yet.</p>
+              )}
+            </div>
+          )}
+        </Card>
+      )}
 
-                 return (
-                   <Link
-                     key={thread.id}
-                     to={profileId ? `/profiles/${profileId}#messages` : "#"}
-                     className='message-thread'
-                   >
-                     <div className="message-thread__avatar-container">
-                       <img src={profileImage} alt={displayName} />
-                       {thread.other_user?.is_online && (
-                         <span className="avatar-online-dot" title="Online" />
-                       )}
-                     </div>
-
-                     <div className='message-thread__content'>
-                       <div className='message-thread__top'>
-                         <div>
-                           <strong>{displayName}</strong>
-                           <div className="message-thread__status-container">
-                             {thread.other_user?.is_online ? (
-                               <span className="status-text status-text--online">Online</span>
-                             ) : (
-                               thread.other_user?.last_seen_at && (
-                                 <span className="status-text status-text--offline">
-                                   Active {formatLastSeen(thread.other_user.last_seen_at)}
-                                 </span>
-                               )
-                             )}
-                           </div>
-                         </div>
-
-                         {thread.created_at && (
-                           <time>
-                             {new Date(thread.created_at).toLocaleDateString()}
-                           </time>
-                         )}
-                       </div>
-
-                       <span>
-                         {thread.body?.slice(0, 70) || "New conversation"}
-                         {thread.body?.length > 70 ? "..." : ""}
-                       </span>
-                     </div>
-                   </Link>
-                 );
-              })
-            ) : (
-              <p className='empty-state'>No conversations yet.</p>
-            )}
-          </div>
-        )}
-      </Card>
     </section>
   );
 }
