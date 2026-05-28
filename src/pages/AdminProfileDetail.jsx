@@ -61,22 +61,30 @@ function AdminProfileDetail() {
       return;
     }
 
-    if (!confirm(`Are you sure you want to ${action} this profile?`)) {
+    if (!confirm(`Are you sure you want to ${action} this user/profile?`)) {
       return;
     }
 
     setActionLoading(true);
 
     try {
-      const body = action === "reject" ? { feedback: feedback.trim() } : {};
-
-      await api.post(`/admin/profiles/${id}/${action}`, body);
-
-      alert(`Profile ${action}ed successfully.`);
+      if (action === "suspend" || action === "activate") {
+        if (!user?.id) {
+          alert("User data not loaded yet.");
+          setActionLoading(false);
+          return;
+        }
+        await api.post(`/admin/users/${user.id}/${action}`);
+        alert(`User ${action}ed successfully.`);
+      } else {
+        const body = action === "reject" ? { feedback: feedback.trim() } : {};
+        await api.post(`/admin/profiles/${id}/${action}`, body);
+        alert(`Profile ${action}ed successfully.`);
+      }
       navigate("/admin/dashboard");
     } catch (error) {
       alert(
-        `Failed to ${action} profile: ${
+        `Failed to ${action}: ${
           error.response?.data?.message || error.message
         }`
       );
@@ -278,14 +286,24 @@ function AdminProfileDetail() {
                 {actionLoading ? "Processing..." : "Reject Profile"}
               </button>
 
-              {user?.status !== "suspended" && user?.status && (
+              {user?.status === "suspended" ? (
                 <button
-                  className="button button--danger"
-                  onClick={() => handleAction("suspend")}
+                  className="button button--success"
+                  onClick={() => handleAction("activate")}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? "Processing..." : "Suspend User"}
+                  {actionLoading ? "Processing..." : "Reactivate User"}
                 </button>
+              ) : (
+                user?.status && (
+                  <button
+                    className="button button--danger"
+                    onClick={() => handleAction("suspend")}
+                    disabled={actionLoading}
+                  >
+                    {actionLoading ? "Processing..." : "Suspend User"}
+                  </button>
+                )
               )}
             </div>
           </div>

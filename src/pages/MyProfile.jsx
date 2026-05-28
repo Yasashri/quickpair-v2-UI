@@ -167,6 +167,13 @@ function MyProfile() {
     <section className='page-card'>
       <ScrollToTop />
 
+      {profile?.status === "rejected" && profile.admin_feedback && (
+        <div className="profile-rejection-banner">
+          <h3>Profile Rejection Reason</h3>
+          <p>{profile.admin_feedback}</p>
+        </div>
+      )}
+
       <Card title={profile ? "Update your profile" : "Create your profile"}>
         <form className='profile-form' onSubmit={handleSubmit}>
           <div className={`profile-status-card ${status.className}`}>
