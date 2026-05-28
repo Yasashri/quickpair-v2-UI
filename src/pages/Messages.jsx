@@ -66,6 +66,17 @@ function Messages() {
       });
   }, [navigate]);
 
+  useEffect(() => {
+    if (selectedThread) {
+      document.body.classList.add("has-active-conversation");
+    } else {
+      document.body.classList.remove("has-active-conversation");
+    }
+    return () => {
+      document.body.classList.remove("has-active-conversation");
+    };
+  }, [selectedThread]);
+
   const getDisplayName = (thread) => {
     return (
       thread.other_user?.profile?.display_name ||
@@ -88,14 +99,16 @@ function Messages() {
   return (
     <section className='page-card messages-page'>
       <ScrollToTop />
-      <div className='page-header'>
-        <span className='eyebrow'>Your inbox</span>
-        <h1>Your conversations</h1>
-        <p>
-          These are the people you have messaged. Click a person to open their
-          profile and continue the conversation.
-        </p>
-      </div>
+      {!selectedThread && (
+        <div className='page-header'>
+          <span className='eyebrow'>Your inbox</span>
+          <h1>Your conversations</h1>
+          <p>
+            These are the people you have messaged. Click a person to open their
+            profile and continue the conversation.
+          </p>
+        </div>
+      )}
 
       {selectedThread ? (
         <ConversationView thread={selectedThread} onClose={() => setSelectedThread(null)} />

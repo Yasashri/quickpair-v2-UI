@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useNewMessage } from "../context/NewMessageContext";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -8,6 +9,7 @@ function Header() {
 
   const { isAuthenticated, logout, isAdminAuthenticated, adminLogout, isProfileApproved } =
     useAuth();
+  const { count, setCount } = useNewMessage();
 
   const isAdminArea = location.pathname.startsWith("/admin");
 
@@ -81,7 +83,7 @@ function Header() {
               </Link>
 
               <Link to="/messages" onClick={closeMenu}>
-                Messages
+                Messages{count > 0 ? (<span className="badge">{count}</span>) : null}
               </Link>
 
               {isAuthenticated ? (

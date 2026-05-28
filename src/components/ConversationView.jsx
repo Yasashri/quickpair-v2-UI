@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import api from '../api/api';
-import Card from './Card';
 import StatusMessage from './StatusMessage';
 import { formatLastSeen } from "../utils/date";
 import './ConversationView.scss';
+import { useNewMessage } from '../context/NewMessageContext';
 
 function ConversationView({ thread, onClose }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-
   const participant = thread.other_user;
+  const { increment, reset } = useNewMessage();
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   // Fetch full message history when thread changes
   useEffect(() => {
@@ -21,13 +29,36 @@ function ConversationView({ thread, onClose }) {
     api
       .get(`/messages/${thread.other_user?.id}`)
       .then((res) => {
-        setMessages(res.data.messages || []);
+        // API returns newest first; reverse for bottom display
+        const msgs = (res.data.messages || []).slice().reverse();
+        setMessages(msgs);
+        // Reset new message count for this conversation
+        reset();
       })
       .catch((err) => {
         setError(err?.response?.data?.message || 'Failed to load messages');
       })
       .finally(() => setLoading(false));
-  }, [thread]);
+  }, [thread, reset]);
+
+  // Poll for new incoming messages
+  useEffect(() => {
+    if (!thread) return undefined;
+    const interval = setInterval(() => {
+      api
+        .get(`/messages/${thread.other_user?.id}`)
+        .then((res) => {
+          const fetched = (res.data.messages || []).slice().reverse();
+          if (fetched.length > messages.length) {
+            // New messages arrived
+            setMessages(fetched);
+            increment();
+          }
+        })
+        .catch(() => {});
+    }, 5000); // every 5 seconds
+    return () => clearInterval(interval);
+  }, [thread, messages.length, increment]);
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
@@ -66,12 +97,13 @@ function ConversationView({ thread, onClose }) {
             <time>{new Date(msg.created_at).toLocaleTimeString()}</time>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
     );
   };
 
   return (
-    <Card className="conversation-view">
+    <div className="conversation-view">
       <div className="conversation-header">
         <button className="close-btn" onClick={onClose} aria-label="Close conversation">
           ✕
@@ -102,7 +134,7 @@ function ConversationView({ thread, onClose }) {
           Send
         </button>
       </div>
-    </Card>
+    </div>
   );
 }
 
