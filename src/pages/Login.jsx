@@ -5,12 +5,14 @@ import ScrollToTop from "../components/ScrollToTop";
 
 function Login() {
   const [form, setForm] = useState({ login: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     setError("");
 
     try {
@@ -18,6 +20,8 @@ function Login() {
       navigate("/profiles");
     } catch (err) {
       setError(err.response?.data?.message || "Unable to sign in.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +42,7 @@ function Login() {
             onChange={(e) => setForm({ ...form, login: e.target.value })}
             type="email"
             required
+            disabled={loading}
           />
         </label>
 
@@ -48,6 +53,7 @@ function Login() {
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             type="password"
             required
+            disabled={loading}
           />
         </label>
 
@@ -59,8 +65,15 @@ function Login() {
 
         {error && <p className="form-error">{error}</p>}
 
-        <button type="submit" className="button">
-          Continue
+        <button type="submit" className="button" disabled={loading}>
+          {loading ? (
+            <>
+              <span className="button-spinner"></span>
+              Logging in...
+            </>
+          ) : (
+            "Continue"
+          )}
         </button>
       </form>
 

@@ -9,12 +9,14 @@ function Register() {
     password: "",
     password_confirmation: "",
   });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     setError("");
     try {
       await register(form);
@@ -27,6 +29,8 @@ function Register() {
             .join(" ") ||
           "Unable to register.",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,6 +47,7 @@ function Register() {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             type='email'
             required
+            disabled={loading}
           />
         </label>
         <label>
@@ -53,6 +58,7 @@ function Register() {
             type='password'
             minLength={8}
             required
+            disabled={loading}
           />
         </label>
         <label>
@@ -65,11 +71,19 @@ function Register() {
             type='password'
             minLength={8}
             required
+            disabled={loading}
           />
         </label>
         {error && <p className='form-error'>{error}</p>}
-        <button type='submit' className='button'>
-          Create account
+        <button type='submit' className='button' disabled={loading}>
+          {loading ? (
+            <>
+              <span className='button-spinner'></span>
+              Creating account...
+            </>
+          ) : (
+            "Create account"
+          )}
         </button>
       </form>
       <p className='form-note'>

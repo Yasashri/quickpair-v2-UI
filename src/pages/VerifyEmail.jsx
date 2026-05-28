@@ -88,7 +88,7 @@ function VerifyEmail() {
             type="text"
             required
             placeholder="Enter 6-digit code"
-            disabled={loading}
+            disabled={loading || resending}
             maxLength={6}
           />
         </label>
@@ -96,8 +96,15 @@ function VerifyEmail() {
         {error && <p className="form-error">{error}</p>}
         {message && <p className="form-success">{message}</p>}
 
-        <button type="submit" className="button" disabled={loading}>
-          {loading ? "Verifying..." : "Verify Code"}
+        <button type="submit" className="button" disabled={loading || resending}>
+          {loading ? (
+            <>
+              <span className="button-spinner"></span>
+              Verifying...
+            </>
+          ) : (
+            "Verify Code"
+          )}
         </button>
       </form>
 
@@ -106,9 +113,16 @@ function VerifyEmail() {
           onClick={handleResend} 
           disabled={resending || loading}
           className="link-button"
-          style={{ fontSize: "0.85rem", color: "rgba(56, 189, 248, 0.8)", background: "transparent", border: "none", cursor: "pointer", fontWeight: "600" }}
+          style={{ fontSize: "0.85rem", color: "rgba(56, 189, 248, 0.8)", background: "transparent", border: "none", cursor: "pointer", fontWeight: "600", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
         >
-          {resending ? "Resending..." : "Resend Verification Code"}
+          {resending ? (
+            <>
+              <span className="button-spinner" style={{ borderColor: "rgba(56, 189, 248, 0.35)", borderTopColor: "rgba(56, 189, 248, 0.8)" }}></span>
+              Resending...
+            </>
+          ) : (
+            "Resend Verification Code"
+          )}
         </button>
 
         <p className="form-note" style={{ margin: 0 }}>

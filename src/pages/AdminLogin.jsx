@@ -5,12 +5,14 @@ import ScrollToTop from "../components/ScrollToTop";
 
 function AdminLogin() {
   const [form, setForm] = useState({ login: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { adminLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     setError("");
 
     try {
@@ -18,6 +20,8 @@ function AdminLogin() {
       navigate("/admin/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid admin login details.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +42,7 @@ function AdminLogin() {
             onChange={(e) => setForm({ ...form, login: e.target.value })}
             type='email'
             required
+            disabled={loading}
           />
         </label>
 
@@ -48,13 +53,21 @@ function AdminLogin() {
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             type='password'
             required
+            disabled={loading}
           />
         </label>
 
         {error && <p className='form-error'>{error}</p>}
 
-        <button type='submit' className='button'>
-          Sign in
+        <button type='submit' className='button' disabled={loading}>
+          {loading ? (
+            <>
+              <span className='button-spinner'></span>
+              Signing in...
+            </>
+          ) : (
+            "Sign in"
+          )}
         </button>
       </form>
     </section>

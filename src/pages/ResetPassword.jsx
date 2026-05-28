@@ -131,7 +131,14 @@ function ResetPassword() {
             {error && <p className="form-error">{error}</p>}
 
             <button type="submit" className="button" disabled={loading}>
-              {loading ? "Resetting..." : "Reset Password"}
+              {loading ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Resetting...
+                </>
+              ) : (
+                "Reset Password"
+              )}
             </button>
           </form>
 

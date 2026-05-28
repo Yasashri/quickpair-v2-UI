@@ -74,7 +74,14 @@ function ForgotPassword() {
             {error && <p className="form-error">{error}</p>}
 
             <button type="submit" className="button" disabled={loading}>
-              {loading ? "Sending..." : "Send OTP Code"}
+              {loading ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Sending...
+                </>
+              ) : (
+                "Send OTP Code"
+              )}
             </button>
           </form>
 
