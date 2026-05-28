@@ -85,6 +85,15 @@ export function AuthProvider({ children }) {
     return response.data;
   };
 
+  const refreshUser = async () => {
+    if (localStorage.getItem("authToken")) {
+      const response = await api.get("/me");
+      setUser(response.data.user);
+      return response.data.user;
+    }
+    return null;
+  };
+
   const logout = async () => {
     try {
       await api.post("/logout");
@@ -124,6 +133,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        refreshUser,
         adminLogin,
         adminLogout,
 

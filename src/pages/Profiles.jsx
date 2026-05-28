@@ -120,6 +120,11 @@ function Profiles() {
                     {profile.user?.is_online && (
                       <span className="online-indicator-dot" title="Online" />
                     )}
+                    {profile.user?.email_verified_at && (
+                      <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+                        &nbsp;✓
+                      </span>
+                    )}
                   </div>
                 }
                 image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../api/api";
 import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
+import useAuth from "../hooks/useAuth";
 
 function MyProfile() {
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [previewImage, setPreviewImage] = useState("/avatar.jpg");
 
@@ -177,7 +179,14 @@ function MyProfile() {
       <Card title={profile ? "Update your profile" : "Create your profile"}>
         <form className='profile-form' onSubmit={handleSubmit}>
           <div className={`profile-status-card ${status.className}`}>
-            <span>{status.label}</span>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
+              <span>{status.label}</span>
+              {user?.email_verified_at && (
+                <span className="email-verified-badge-label" style={{ color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.34)", background: "rgba(16, 185, 129, 0.1)", display: "inline-flex", padding: "7px 12px", borderRadius: "999px", fontSize: "0.75rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  ✓ Email Verified
+                </span>
+              )}
+            </div>
             <p>{status.text}</p>
           </div>
 

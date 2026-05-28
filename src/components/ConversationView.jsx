@@ -111,7 +111,7 @@ function ConversationView({ thread, onClose }) {
         <div className="participant-info">
           <img src={participant.profile?.profile_image_url || `https://i.pravatar.cc/400?img=${(participant.id % 70) + 1}`} alt={participant.email} />
           <div className="name-status">
-            <strong>{participant.display_name || participant.email}</strong>
+            <strong>{participant?.profile?.display_name || participant.email}</strong>
             {participant.is_online ? (
               <span className="status online">Online</span>
             ) : (

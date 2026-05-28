@@ -179,6 +179,12 @@ function ProfileDetail() {
                   {isOnline ? 'Online' : `Last seen: ${formatLastSeen(lastSeenAt)}`}
                 </span>
               )}
+
+              {profile.user?.email_verified_at && (
+                <span className="status-indicator-badge email-verified-badge" style={{ color: "#10b981", background: "rgba(16, 185, 129, 0.08)", borderColor: "rgba(16, 185, 129, 0.3)" }}>
+                  <span style={{ marginRight: "4px" }}>✓</span> Email Verified
+                </span>
+              )}
             </div>
 
             <h2>{profile.display_name || "New member"}</h2>

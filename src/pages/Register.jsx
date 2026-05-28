@@ -18,7 +18,7 @@ function Register() {
     setError("");
     try {
       await register(form);
-      navigate("/profiles");
+      navigate("/verify-email");
     } catch (err) {
       setError(
         err.response?.data?.message ||
