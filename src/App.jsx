@@ -5,6 +5,8 @@ import Profiles from "./pages/Profiles";
 import ProfileDetail from "./pages/ProfileDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import MyProfile from "./pages/MyProfile";
 import Messages from "./pages/Messages";
 import AdminLogin from "./pages/AdminLogin";
@@ -28,6 +30,8 @@ function App() {
             <Route path='/profiles/:id' element={<ProfileDetail />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/forgot-password' element={<ForgotPassword />} />
+            <Route path='/reset-password' element={<ResetPassword />} />
             <Route
               path='/me'
               element={

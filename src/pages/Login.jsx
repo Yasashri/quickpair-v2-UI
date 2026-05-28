@@ -51,6 +51,12 @@ function Login() {
           />
         </label>
 
+        <div className="form-helper">
+          <Link to="/forgot-password" style={{ color: "rgba(56, 189, 248, 0.8)", fontSize: "0.85rem", fontWeight: "600", alignSelf: "flex-end" }}>
+            Forgot password?
+          </Link>
+        </div>
+
         {error && <p className="form-error">{error}</p>}
 
         <button type="submit" className="button">
