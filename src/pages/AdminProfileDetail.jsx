@@ -102,7 +102,7 @@ function AdminProfileDetail() {
             profile.profile_image_path
           }`
         : null) ||
-      `https://i.pravatar.cc/500?img=${(Number(profile?.id) % 70) + 1}`
+      `/avatar.jpg`
     );
   };
 

@@ -92,7 +92,7 @@ function Messages() {
   const getProfileImage = (thread) => {
     return (
       thread.other_user?.profile?.profile_image_url ||
-      `https://i.pravatar.cc/400?img=${(thread.other_user?.id % 70) + 1}`
+      `/avatar.jpg`
     );
   };
 

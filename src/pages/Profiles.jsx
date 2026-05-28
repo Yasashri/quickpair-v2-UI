@@ -131,7 +131,7 @@ function Profiles() {
                       )}
                     </div>
                   }
-                  image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}
+                  image={profile.profile_image_url || `/avatar.jpg`}
                   imageAlt={profile.display_name || "Profile image"}
                 >
                   <p>{profile.bio || "No bio yet."}</p>

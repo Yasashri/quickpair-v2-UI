@@ -109,7 +109,7 @@ function ConversationView({ thread, onClose }) {
           ✕
         </button>
         <div className="participant-info">
-          <img src={participant.profile?.profile_image_url || `https://i.pravatar.cc/400?img=${(participant.id % 70) + 1}`} alt={participant.email} />
+          <img src={participant.profile?.profile_image_url || `/avatar.jpg`} alt={participant.email} />
           <div className="name-status">
             <strong>{participant?.profile?.display_name || participant.email}</strong>
             {participant.is_online ? (

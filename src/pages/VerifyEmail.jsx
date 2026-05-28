@@ -30,7 +30,7 @@ function VerifyEmail() {
     setMessage("");
 
     try {
-      const response = await api.post("/email/verify", { code });
+      const response = await api.post("/email/verify", { code: code.trim() });
       setMessage(response.data.message || "Email verified successfully!");
       // Refresh AuthContext user details (including email_verified_at)
       await refreshUser();
