@@ -112,55 +112,57 @@ function Profiles() {
         ) : (
           <div className='grid-list'>
             {profiles.map((profile) => (
-              <Card
+              <Link
                 key={profile.id}
-                title={
-                  <div className="profile-card-title">
-                    <span>{profile.display_name || "New member"}</span>
-                    {profile.user?.is_online && (
-                      <span className="online-indicator-dot" title="Online" />
-                    )}
-                    {profile.user?.email_verified_at && (
-                      <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
-                        &nbsp;✓
-                      </span>
-                    )}
-                  </div>
-                }
-                image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}
-                imageAlt={profile.display_name || "Profile image"}
+                to={`/profiles/${profile.id}`}
+                className="card-link"
               >
-                <p>{profile.bio || "No bio yet."}</p>
-
-                <p className='profile-meta'>
-                  {profile.city
-                    ? `${profile.city}, ${profile.country}`
-                    : "Location hidden"}
-                </p>
-
-                <p className='active-status'>
-                  {profile.user?.is_online ? (
-                    <span className="active-status--online">Online</span>
-                  ) : (
-                    profile.user?.last_seen_at && (
-                      <span className="active-status--offline">
-                        Active {formatLastSeen(profile.user.last_seen_at)}
-                      </span>
-                    )
-                  )}
-                </p>
-
-                <p className='profile-looking'>
-                  Looking for: <span>{profile.looking_for || "anyone"}</span>
-                </p>
-
-                <Link
-                  to={`/profiles/${profile.id}`}
-                  className='button button--small'
+                <Card
+                  title={
+                    <div className="profile-card-title">
+                      <span>{profile.display_name || "New member"}</span>
+                      {profile.user?.is_online && (
+                        <span className="online-indicator-dot" title="Online" />
+                      )}
+                      {profile.user?.email_verified_at && (
+                        <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+                          &nbsp;✓
+                        </span>
+                      )}
+                    </div>
+                  }
+                  image={`https://i.pravatar.cc/400?img=${(profile.id % 70) + 1}`}
+                  imageAlt={profile.display_name || "Profile image"}
                 >
-                  View profile
-                </Link>
-              </Card>
+                  <p>{profile.bio || "No bio yet."}</p>
+
+                  <p className='profile-meta'>
+                    {profile.city
+                      ? `${profile.city}, ${profile.country}`
+                      : "Location hidden"}
+                  </p>
+
+                  <p className='active-status'>
+                    {profile.user?.is_online ? (
+                      <span className="active-status--online">Online</span>
+                    ) : (
+                      profile.user?.last_seen_at && (
+                        <span className="active-status--offline">
+                          Active {formatLastSeen(profile.user.last_seen_at)}
+                        </span>
+                      )
+                    )}
+                  </p>
+
+                  <p className='profile-looking'>
+                    Looking for: <span>{profile.looking_for || "anyone"}</span>
+                  </p>
+
+                  <div className='button button--small'>
+                    View profile
+                  </div>
+                </Card>
+              </Link>
             ))}
 
             {profiles.length === 0 && (
