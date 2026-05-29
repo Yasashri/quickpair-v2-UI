@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import StatusMessage from "../components/StatusMessage";
@@ -13,6 +13,8 @@ function Messages() {
   const [loading, setLoading] = useState(true);
   const [statusError, setStatusError] = useState(null);
   const [selectedThread, setSelectedThread] = useState(null);
+  const [searchParams] = useSearchParams();
+  const userIdParam = searchParams.get("userId");
 
   const navigate = useNavigate();
 
@@ -23,7 +25,29 @@ function Messages() {
     api
       .get("/messages")
       .then((response) => {
-        setThreads(response.data.data || []);
+        const threadList = response.data.data || [];
+        setThreads(threadList);
+
+        if (userIdParam) {
+          const targetId = parseInt(userIdParam, 10);
+          const existing = threadList.find((t) => t.other_user?.id === targetId);
+          if (existing) {
+            setSelectedThread(existing);
+          } else {
+            api
+              .get(`/messages/${targetId}`)
+              .then((res) => {
+                const mockThread = {
+                  id: "new-" + targetId,
+                  other_user: res.data.other_user,
+                  body: "",
+                  created_at: null,
+                };
+                setSelectedThread(mockThread);
+              })
+              .catch(() => {});
+          }
+        }
       })
       .catch((error) => {
         const status = error?.response?.status;
@@ -64,7 +88,7 @@ function Messages() {
       .finally(() => {
         setLoading(false);
       });
-  }, [navigate]);
+  }, [navigate, userIdParam]);
 
   useEffect(() => {
     if (selectedThread) {

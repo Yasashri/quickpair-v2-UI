@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  
+  # Exclude physical files and directories from rewrite rules
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Exclude API endpoints so they are handled directly by Laravel instead of falling back to React
+  RewriteCond %{REQUEST_URI} !^/api
+  
+  # Rewrite all other paths to index.html to allow React Router to handle them client-side
+  RewriteRule . /index.html [L]
+</IfModule>

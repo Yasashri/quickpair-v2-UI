@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, Link, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Profiles from "./pages/Profiles";
@@ -17,7 +17,7 @@ import AdminProfileDetail from "./pages/AdminProfileDetail";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
-import { NewMessageProvider } from "./context/NewMessageContext";
+import { useNewMessage } from "./context/NewMessageContext";
 import Footer from "./components/Footer";
 import useAuth from "./hooks/useAuth";
 import api from "./api/api";
@@ -25,6 +25,8 @@ import api from "./api/api";
 function App() {
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast, dismissToast } = useNewMessage();
   const [resending, setResending] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
 
@@ -46,12 +48,38 @@ function App() {
   const showVerificationBanner = isAuthenticated && user && !user.email_verified_at && location.pathname !== "/verify-email";
 
   return (
-    <NewMessageProvider>
-      <div className='app-shell'>
-        <Header />
+    <div className='app-shell'>
+      <Header />
+
+      {toast.show && (
+        <div 
+          className="message-toast"
+          onClick={() => {
+            dismissToast();
+            navigate(`/messages?userId=${toast.userId}`);
+          }}
+        >
+          <div className="message-toast__avatar">
+            <img src="/avatar.jpg" alt="new message" />
+          </div>
+          <div className="message-toast__content">
+            <strong>{toast.senderName}</strong>
+            <p>{toast.body}</p>
+          </div>
+          <button 
+            className="message-toast__close" 
+            onClick={(e) => {
+              e.stopPropagation();
+              dismissToast();
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
         {showVerificationBanner && (
-          <div className="global-verification-banner">
+          <div className="container global-verification-banner">
             <span>⚠️ Your email address is not verified. Please verify your email to unlock all features.</span>
             <div className="banner-actions">
               <Link to="/verify-email" className="banner-link">Verify Now</Link>
@@ -118,7 +146,6 @@ function App() {
         </main>
         <Footer />
       </div>
-    </NewMessageProvider>
   );
 }
 

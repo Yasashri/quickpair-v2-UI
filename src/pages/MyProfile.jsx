@@ -110,6 +110,15 @@ function MyProfile() {
     setSaving(true);
     setMessage("");
 
+    const usesFileUpload = data.profile_image instanceof File;
+    const hasExistingImage = profile && (profile.profile_img_path || profile.profile_image_url);
+
+    if (!usesFileUpload && !hasExistingImage) {
+      setMessage("Profile image is required. Please upload a profile photo.");
+      setSaving(false);
+      return;
+    }
+
     try {
       const usesFileUpload = data.profile_image instanceof File;
 
@@ -207,7 +216,7 @@ function MyProfile() {
             </div>
 
             <label>
-              Profile image
+              Profile image <span style={{ color: "#ff4f7b" }}>*</span>
               <input
                 type='file'
                 accept='image/*'
