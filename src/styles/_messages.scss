@@ -157,7 +157,7 @@
 
     .message-thread {
       grid-template-columns: 54px 1fr;
-      gap: 12px;
+      gap: 26px;
       padding: 12px;
       border-radius: 16px;
 
@@ -387,4 +387,4 @@ body.has-active-conversation {
     left: 16px;
     width: calc(100% - 32px);
   }
-}
+}
