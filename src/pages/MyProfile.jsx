@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
 import useAuth from "../hooks/useAuth";
+import Modal from "../components/Modal";
 
 function MyProfile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [previewImage, setPreviewImage] = useState("/avatar.jpg");
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    if (user && !user.email_verified_at) {
+      setShowModal(true);
+    }
+  }, [user]);
 
   const [data, setData] = useState({
     first_name: "",
@@ -107,6 +117,12 @@ function MyProfile() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (user && !user.email_verified_at) {
+      setShowModal(true);
+      return;
+    }
+
     setSaving(true);
     setMessage("");
 
@@ -356,6 +372,16 @@ function MyProfile() {
           </fieldset>
         </form>
       </Card>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        type="warning"
+        title="Email Verification Required"
+        message="Please verify your email address before updating your profile."
+        confirmText="Verify Now"
+        cancelText="Close"
+        onConfirm={() => navigate("/verify-email")}
+      />
     </section>
   );
 }
