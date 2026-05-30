@@ -45,8 +45,32 @@ function ProfileDetail() {
 
   if (loading) {
     return (
-      <section className='page-card profile-page'>
-        <p className='profile-status'>Loading profile...</p>
+      <section className='page-card profile-page skeleton-profile-detail'>
+        <ScrollToTop />
+        <Card title={<div className="skeleton skeleton-detail-badge"></div>}>
+          <div className='profile-hero'>
+            <div className="skeleton skeleton-detail-image"></div>
+
+            <div className='profile-hero__content'>
+              <div className="profile-online-container">
+                <div className="skeleton skeleton-detail-badge"></div>
+              </div>
+
+              <div className="skeleton skeleton-detail-name"></div>
+              <div className="skeleton skeleton-detail-bio"></div>
+              <div className="skeleton skeleton-detail-btn"></div>
+            </div>
+          </div>
+
+          <dl className='profile-details'>
+            {[...Array(4)].map((_, i) => (
+              <div key={i}>
+                <dt><div className="skeleton" style={{ height: "14px", width: "40px" }}></div></dt>
+                <dd><div className="skeleton" style={{ height: "16px", width: "80px", marginTop: "4px" }}></div></dd>
+              </div>
+            ))}
+          </dl>
+        </Card>
       </section>
     );
   }

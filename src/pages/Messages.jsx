@@ -139,7 +139,22 @@ function Messages() {
       ) : (
         <Card title='Messaged profiles'>
           {loading ? (
-            <p className='messages-status'>Loading conversations...</p>
+            <div className='messages-list'>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="message-thread" style={{ pointerEvents: "none", opacity: 0.7 }}>
+                  <div className='message-thread__avatar-container'>
+                    <div className="skeleton" style={{ width: "64px", height: "64px", borderRadius: "18px" }}></div>
+                  </div>
+                  <div className='message-thread__content'>
+                    <div className='message-thread__top' style={{ display: "flex", justifyContent: "between", width: "100%", gap: "10px" }}>
+                      <div className="skeleton" style={{ width: "120px", height: "18px" }}></div>
+                      <div className="skeleton" style={{ width: "60px", height: "14px", marginLeft: "auto" }}></div>
+                    </div>
+                    <div className="skeleton" style={{ width: "70%", height: "16px", marginTop: "6px" }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : statusError ? (
             <StatusMessage
               type={statusError.type}

@@ -108,7 +108,22 @@ function Profiles() {
         </div>
 
         {loading ? (
-          <p className='profiles-status'>Loading profiles...</p>
+          <div className='grid-list'>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="card-link skeleton-card">
+                <Card
+                  title={<div className="skeleton skeleton-title"></div>}
+                  image="data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 100 100'%2F%3E"
+                  imageAlt="Loading..."
+                >
+                  <div className="skeleton skeleton-bio"></div>
+                  <div className="skeleton skeleton-bio short"></div>
+                  <div className="skeleton skeleton-meta"></div>
+                  <div className="skeleton skeleton-button"></div>
+                </Card>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className='grid-list'>
             {profiles.map((profile) => (

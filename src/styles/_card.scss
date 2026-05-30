@@ -117,3 +117,126 @@
     }
   }
 }
+
+/* Skeleton Loader Base & Animation */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.06),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Skeleton layouts inside Card */
+.skeleton-card {
+  pointer-events: none;
+  
+  .card__image {
+    background-color: rgba(255, 255, 255, 0.04);
+    position: relative;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.06),
+        transparent
+      );
+      animation: shimmer 1.6s infinite;
+    }
+  }
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin-bottom: 4px;
+}
+
+.skeleton-bio {
+  height: 16px;
+  width: 100%;
+  margin-top: 4px;
+
+  &.short {
+    width: 80%;
+  }
+}
+
+.skeleton-meta {
+  height: 14px;
+  width: 40%;
+  margin-top: 8px;
+}
+
+.skeleton-button {
+  height: 36px;
+  width: 100%;
+  border-radius: 999px;
+  margin-top: 12px;
+}
+
+/* Detail page skeleton */
+.skeleton-profile-detail {
+  .skeleton-detail-image {
+    width: 260px;
+    height: 260px;
+    border-radius: 24px;
+    flex-shrink: 0;
+    
+    @media (max-width: 768px) {
+      width: 100%;
+      height: 240px;
+    }
+  }
+  
+  .skeleton-detail-badge {
+    width: 120px;
+    height: 24px;
+    border-radius: 999px;
+  }
+  
+  .skeleton-detail-name {
+    width: 200px;
+    height: 38px;
+    margin-top: 16px;
+    border-radius: 12px;
+  }
+  
+  .skeleton-detail-bio {
+    width: 100%;
+    height: 60px;
+    margin-top: 16px;
+    border-radius: 12px;
+  }
+  
+  .skeleton-detail-btn {
+    width: 150px;
+    height: 48px;
+    margin-top: 24px;
+    border-radius: 999px;
+  }
+}
