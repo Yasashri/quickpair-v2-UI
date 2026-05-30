@@ -496,3 +496,125 @@
     }
   }
 }
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: #e5e7eb;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 180ms ease;
+    user-select: none;
+
+    &:hover {
+      border-color: rgba(56, 189, 248, 0.48);
+      background: rgba(56, 189, 248, 0.1);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      background: #ff4f7b;
+      color: #ffffff;
+      border-color: #ff4f7b;
+      box-shadow: 0 4px 14px rgba(255, 79, 123, 0.4);
+      pointer-events: none;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none !important;
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+    
+    &--arrow {
+      border-radius: 12px;
+      padding: 0 14px;
+    }
+  }
+
+  &__ellipsis {
+    color: #9ca3af;
+    font-weight: 600;
+    padding: 0 4px;
+    user-select: none;
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &--desktop {
+      display: flex;
+    }
+
+    &--mobile {
+      display: none;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      font-weight: 600;
+      gap: 6px;
+      padding: 0 12px;
+      user-select: none;
+      
+      .pagination__current {
+        color: #ffffff;
+        font-weight: 700;
+      }
+      
+      .pagination__divider {
+        color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 4px;
+    margin-top: 28px;
+    padding-top: 18px;
+
+    &__pages {
+      &--desktop {
+        display: none;
+      }
+      &--mobile {
+        display: flex;
+      }
+    }
+
+    &__btn {
+      min-width: 34px;
+      height: 34px;
+      font-size: 0.75rem;
+      
+      &--arrow {
+        padding: 0 10px;
+        border-radius: 10px;
+      }
+    }
+  }
+}

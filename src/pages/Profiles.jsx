@@ -1,20 +1,32 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
 import { formatLastSeen } from "../utils/date";
 
 function Profiles() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = parseInt(searchParams.get("page") || "1", 10);
+
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [gender, setGender] = useState("all");
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const [lastPage, setLastPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const debounceDelay = 500;
 
+  // Keep state in sync with URL page changes (e.g. browser back/forward)
+  useEffect(() => {
+    if (pageParam !== currentPage) {
+      setCurrentPage(pageParam);
+    }
+  }, [pageParam]);
 
   useEffect(() => {
     setLoading(true);
@@ -22,31 +34,98 @@ function Profiles() {
     const params = {
       search,
       sort: sortBy,
+      page: currentPage,
       ...(gender !== "all" && { gender }),
     };
 
     api
       .get("/profiles", { params })
       .then((response) => {
-        setProfiles(response.data.data || []);
+        const paginator = response.data;
+        setProfiles(paginator.data || []);
+        const apiPage = paginator.current_page || 1;
+        setCurrentPage(apiPage);
+        setLastPage(paginator.last_page || 1);
+        setTotal(paginator.total || 0);
         setLoading(false);
+
+        // If returned page doesn't match URL query, sync it (e.g. page out of bounds)
+        if (apiPage !== pageParam) {
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            if (apiPage === 1) {
+              next.delete("page");
+            } else {
+              next.set("page", apiPage);
+            }
+            return next;
+          });
+        }
       })
       .catch(() => setLoading(false));
-  }, [search, sortBy, gender]);
+  }, [search, sortBy, gender, currentPage, pageParam]);
 
   useEffect(() => {
+    if (query === "" && search === "") return;
+
     const handler = setTimeout(() => {
       setSearch(query);
+      changePage(1);
     }, debounceDelay);
 
     return () => clearTimeout(handler);
   }, [query]);
+
+  const changePage = (page) => {
+    setCurrentPage(page);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (page === 1) {
+        next.delete("page");
+      } else {
+        next.set("page", page);
+      }
+      return next;
+    });
+  };
 
   const clearSearch = () => {
     setSearch("");
     setQuery("");
     setSortBy("recent");
     setGender("all");
+    changePage(1);
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const windowSize = 1; // number of pages to show on either side of currentPage
+    
+    // Always include page 1
+    pages.push(1);
+    
+    // Calculate range around currentPage
+    let startRange = Math.max(2, currentPage - windowSize);
+    let endRange = Math.min(lastPage - 1, currentPage + windowSize);
+    
+    if (startRange > 2) {
+      pages.push("...");
+    }
+    
+    for (let i = startRange; i <= endRange; i++) {
+      pages.push(i);
+    }
+    
+    if (endRange < lastPage - 1) {
+      pages.push("...");
+    }
+    
+    // Always include lastPage if lastPage > 1
+    if (lastPage > 1) {
+      pages.push(lastPage);
+    }
+    
+    return pages;
   };
 
   return (
@@ -74,7 +153,10 @@ function Profiles() {
           <div className='profiles-filter__controls'>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => {
+                setSortBy(e.target.value);
+                changePage(1);
+              }}
               aria-label='Sort profiles'
             >
               <option value='recent'>Sort: Recent</option>
@@ -85,7 +167,10 @@ function Profiles() {
 
             <select
               value={gender}
-              onChange={(e) => setGender(e.target.value)}
+              onChange={(e) => {
+                setGender(e.target.value);
+                changePage(1);
+              }}
               aria-label='Filter by gender'
             >
               <option value='all'>All genders</option>
@@ -183,6 +268,55 @@ function Profiles() {
             {profiles.length === 0 && (
               <p className='empty-state'>No profiles found.</p>
             )}
+          </div>
+        )}
+
+        {!loading && lastPage > 1 && (
+          <div className="pagination">
+            <button
+              className="pagination__btn pagination__btn--arrow"
+              onClick={() => changePage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              aria-label="Previous page"
+            >
+              &larr; Prev
+            </button>
+
+            <div className="pagination__pages pagination__pages--desktop">
+              {getPageNumbers().map((page, index) =>
+                page === "..." ? (
+                  <span key={`ellipsis-${index}`} className="pagination__ellipsis">
+                    &bull;&bull;&bull;
+                  </span>
+                ) : (
+                  <button
+                    key={`page-${page}`}
+                    className={`pagination__btn ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                    onClick={() => changePage(page)}
+                    aria-label={`Go to page ${page}`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+            </div>
+
+            <div className="pagination__pages pagination__pages--mobile">
+              <span className="pagination__current">{currentPage}</span>
+              <span className="pagination__divider">/</span>
+              <span className="pagination__total">{lastPage}</span>
+            </div>
+
+            <button
+              className="pagination__btn pagination__btn--arrow"
+              onClick={() => changePage(Math.min(lastPage, currentPage + 1))}
+              disabled={currentPage === lastPage}
+              aria-label="Next page"
+            >
+              Next &rarr;
+            </button>
           </div>
         )}
       </div>
