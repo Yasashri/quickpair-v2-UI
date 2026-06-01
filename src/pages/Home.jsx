@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Card from "../components/Card";
+import { motion } from "framer-motion";
 import api from "../api/api";
 
 const slides = [
@@ -21,6 +21,29 @@ const slides = [
     alt: "Cozy dinner date table",
   },
 ];
+
+const staggerContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const featureItemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      type: "spring", 
+      stiffness: 100, 
+      damping: 15 
+    } 
+  }
+};
 
 function Home() {
   const [form, setForm] = useState({ name: "", email: "", type: "issue", message: "" });
@@ -53,7 +76,13 @@ function Home() {
         ))}
       </div>
 
-      <div className="hero-card">
+      {/* Hero Entry Animation */}
+      <motion.div 
+        className="hero-card"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="hero-card__content">
           <span className="eyebrow">Dating made simple</span>
 
@@ -76,18 +105,58 @@ function Home() {
             </Link>
           </div>
         </div>
+      </motion.div>
 
-       {/*  <div className="hero-preview">
-          <Card title="Featured profile">
-            <p>
-              Enjoy meaningful connections and a friendly community designed for
-              real dating.
-            </p>
-          </Card>
-        </div> */}
-      </div>
+      {/* About Us Card Scroll Animation */}
+      <motion.div 
+        className="about-card"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <span className="eyebrow" style={{ borderColor: "rgba(56, 189, 248, 0.3)", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8" }}>About us</span>
+        <h2>Connecting Hearts Over Shared Tables</h2>
+        <p>
+          QuickPair was founded on a simple belief: the best connections start with a shared meal, a cozy cup of coffee, and real, face-to-face conversations. We help you skip the endless swiping and superficial chats, matching you directly with local food lovers and romantics who are ready to meet in person.
+        </p>
+        
+        <motion.div 
+          className="about-features" 
+          variants={staggerContainerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+          style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px", marginTop: "28px" }}
+        >
+          <motion.div className="feature-item" variants={featureItemVariants} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)", padding: "20px", borderRadius: "18px" }}>
+            <span style={{ fontSize: "1.75rem", display: "block", marginBottom: "12px" }}>🍽️</span>
+            <h3 style={{ color: "#ffffff", fontSize: "1rem", fontWeight: "700", margin: "0 0 8px" }}>Dinner Dates First</h3>
+            <p style={{ color: "#b3aecf", fontSize: "0.85rem", margin: 0, lineHeight: "1.5" }}>Connect over shared cuisines and dinner tables. Skip the generic greetings and invite your match directly to your favorite spot.</p>
+          </motion.div>
+          
+          <motion.div className="feature-item" variants={featureItemVariants} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)", padding: "20px", borderRadius: "18px" }}>
+            <span style={{ fontSize: "1.75rem", display: "block", marginBottom: "12px" }}>✨</span>
+            <h3 style={{ color: "#ffffff", fontSize: "1rem", fontWeight: "700", margin: "0 0 8px" }}>Genuine Connections</h3>
+            <p style={{ color: "#b3aecf", fontSize: "0.85rem", margin: 0, lineHeight: "1.5" }}>We focus on real profiles and authentic intentions. No endless loops, just honest conversations leading to cozy dinner chats.</p>
+          </motion.div>
+          
+          <motion.div className="feature-item" variants={featureItemVariants} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)", padding: "20px", borderRadius: "18px" }}>
+            <span style={{ fontSize: "1.75rem", display: "block", marginBottom: "12px" }}>🔒</span>
+            <h3 style={{ color: "#ffffff", fontSize: "1rem", fontWeight: "700", margin: "0 0 8px" }}>Safe & Secure</h3>
+            <p style={{ color: "#b3aecf", fontSize: "0.85rem", margin: 0, lineHeight: "1.5" }}>With robust verification safety steps and policy safeguards, we keep our community clean, respectful, and safe for everyone.</p>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <div className="contact-card">
+      {/* Contact Card Scroll Animation */}
+      <motion.div 
+        className="contact-card"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="contact-card__header">
           <span className="eyebrow" style={{ borderColor: "rgba(255, 79, 123, 0.3)", background: "rgba(255, 79, 123, 0.1)", color: "#ff4f7b" }}>Get in touch</span>
           <h2>Have issues or improvements?</h2>
@@ -166,7 +235,7 @@ function Home() {
             <a href="mailto:quickpair.ca@gmail.com">quickpair.ca@gmail.com</a>
           </p>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

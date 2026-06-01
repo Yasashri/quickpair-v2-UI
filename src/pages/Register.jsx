@@ -83,7 +83,7 @@ function Register() {
           />
         </label>
         
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px", margin: "20px 0" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.85rem", color: "#9ca3af" }}>
             <input
               type="checkbox"

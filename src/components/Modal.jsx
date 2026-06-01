@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import ReactDOM from "react-dom";
+import { motion } from "framer-motion";
 
 function Modal({
   isOpen,
@@ -87,8 +88,21 @@ function Modal({
   };
 
   return ReactDOM.createPortal(
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className={`modal-dialog modal-dialog--${type}`} role="dialog" aria-modal="true">
+    <motion.div 
+      className="modal-backdrop" 
+      onClick={handleBackdropClick}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div 
+        className={`modal-dialog modal-dialog--${type}`} 
+        role="dialog" 
+        aria-modal="true"
+        initial={{ scale: 0.95, y: 12, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 380, damping: 26 }}
+      >
         {showClose && (
           <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
             &times;
@@ -123,8 +137,8 @@ function Modal({
             {confirmText}
           </button>
         </div>
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>,
     document.body
   );
 }
