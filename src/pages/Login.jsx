@@ -80,6 +80,13 @@ function Login() {
       <p className="form-note">
         Need an account? <Link to="/register">Register now</Link>
       </p>
+
+      <p className="form-note" style={{ marginTop: "16px", fontSize: "0.8rem", color: "#6b7280" }}>
+        By logging in, you agree to our{" "}
+        <Link to="/terms" style={{ textDecoration: "underline", color: "inherit" }}>Terms of Service</Link>{" "}
+        and{" "}
+        <Link to="/privacy" style={{ textDecoration: "underline", color: "inherit" }}>Privacy Policy</Link>.
+      </p>
     </section>
   );
 }

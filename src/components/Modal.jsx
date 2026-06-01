@@ -12,6 +12,8 @@ function Modal({
   onConfirm,
   onCancel,
   closeOnBackdrop = true,
+  showClose = true,
+  confirmDisabled = false,
 }) {
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -69,7 +71,7 @@ function Modal({
   };
 
   const handleBackdropClick = (e) => {
-    if (closeOnBackdrop && e.target === e.currentTarget) {
+    if (closeOnBackdrop && showClose && e.target === e.currentTarget) {
       onClose();
     }
   };
@@ -87,9 +89,11 @@ function Modal({
   return ReactDOM.createPortal(
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div className={`modal-dialog modal-dialog--${type}`} role="dialog" aria-modal="true">
-        <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
-          &times;
-        </button>
+        {showClose && (
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
+            &times;
+          </button>
+        )}
 
         <div className={`modal-icon modal-icon--${type}`}>
           {renderIcon()}
@@ -97,7 +101,7 @@ function Modal({
 
         <div className="modal-content">
           {title && <h2 className="modal-title">{title}</h2>}
-          {message && <p className="modal-message">{message}</p>}
+          {message && <div className="modal-message">{message}</div>}
         </div>
 
         <div className="modal-actions">
@@ -114,6 +118,7 @@ function Modal({
             type="button"
             className="button modal-btn modal-btn--confirm"
             onClick={handleConfirm}
+            disabled={confirmDisabled}
           >
             {confirmText}
           </button>

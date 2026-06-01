@@ -105,6 +105,17 @@ function Header() {
                   </Link>
                 </>
               )}
+
+              {/* Mobile drawer policy links */}
+              <div className="mobile-only-footer">
+                <Link to="/terms" onClick={closeMenu}>
+                  Terms of Service
+                </Link>
+                <span className="separator">•</span>
+                <Link to="/privacy" onClick={closeMenu}>
+                  Privacy Policy
+                </Link>
+              </div>
             </>
           )}
         </nav>

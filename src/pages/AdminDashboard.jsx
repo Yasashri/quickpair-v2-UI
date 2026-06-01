@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
 import Card from '../components/Card';
+import AdminPolicyEditor from '../components/AdminPolicyEditor';
 
 const views = [
   { key: 'all', label: 'All profiles' },
   { key: 'pending', label: 'Pending profiles' },
   { key: 'rejected', label: 'Rejected profiles' },
   { key: 'users', label: 'Users' },
+  { key: 'policies', label: 'Terms & Policies' },
 ];
 
 function AdminDashboard() {
@@ -96,6 +98,7 @@ function AdminDashboard() {
   };
 
   const fetchTabData = async (tabKey, page) => {
+    if (tabKey === 'policies') return;
     let url = '';
     if (tabKey === 'all') url = '/admin/profiles';
     else if (tabKey === 'pending') url = '/admin/profiles/pending';
@@ -285,6 +288,14 @@ function AdminDashboard() {
               ) : (
                 <button className="button button--small" onClick={() => handleAction(`/admin/users/${user.id}/suspend`)} disabled={actionLoading}>Suspend</button>
               )}
+              <button
+                type="button"
+                className="button button--ghost button--small"
+                onClick={() => window.open(`/admin/users/${user.id}/compliance-report`, '_blank')}
+                style={{ marginLeft: "8px" }}
+              >
+                Print PDF
+              </button>
             </div>
           </div>
         ))}
@@ -312,7 +323,9 @@ function AdminDashboard() {
                 onClick={() => setView(item.key)}
               >
                 <span>{item.label}</span>
-                <span className="sidebar-count">{getProfileCount(item.key)}</span>
+                {item.key !== 'policies' && (
+                  <span className="sidebar-count">{getProfileCount(item.key)}</span>
+                )}
               </button>
             ))}
           </aside>
@@ -321,6 +334,10 @@ function AdminDashboard() {
             {view === 'users' ? (
               <Card title="Users">
                 {renderUsers()}
+              </Card>
+            ) : view === 'policies' ? (
+              <Card title="Manage Terms & Policies">
+                <AdminPolicyEditor />
               </Card>
             ) : (
               <Card title={views.find((item) => item.key === view)?.label || 'Profiles'}>

@@ -1,0 +1,110 @@
+@use "./variables.scss" as *;
+
+.policies-page {
+  padding-top: 40px;
+  padding-bottom: 80px;
+  max-width: 860px;
+  margin: 0 auto;
+
+  .policy-card {
+    padding: 48px;
+    border: 1px solid $border;
+    border-radius: 28px;
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(56, 189, 248, 0.08),
+        transparent 34%
+      ),
+      rgba(15, 26, 46, 0.82);
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+
+    @media (max-width: #{$mobile - 1px}) {
+      padding: 20px 16px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .policy-header {
+    margin-bottom: 36px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 24px;
+
+    h1 {
+      color: $white;
+      font-size: $font-3xl;
+      margin: 0 0 12px;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+
+      @media (max-width: #{$mobile - 1px}) {
+        font-size: $font-mobile-2xl;
+      }
+    }
+
+    .last-updated {
+      color: $muted;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+  }
+
+  .policy-section {
+    margin-bottom: 40px;
+
+    h2 {
+      color: $white;
+      font-size: 1.35rem;
+      margin: 0 0 16px;
+      letter-spacing: -0.01em;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      @media (max-width: #{$mobile - 1px}) {
+        font-size: 1.15rem;
+      }
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: $primary;
+        border-radius: 99px;
+      }
+    }
+
+    p {
+      color: $sub-text;
+      font-size: $font-base;
+      line-height: 1.75;
+      margin: 0 0 16px;
+
+      @media (max-width: #{$mobile - 1px}) {
+        font-size: $font-mobile-base;
+        line-height: 1.65;
+      }
+    }
+
+    ul {
+      margin: 0 0 20px;
+      padding-left: 20px;
+
+      li {
+        color: $sub-text;
+        font-size: $font-base;
+        line-height: 1.7;
+        margin-bottom: 8px;
+
+        @media (max-width: #{$mobile - 1px}) {
+          font-size: $font-mobile-base;
+        }
+      }
+    }
+  }
+}

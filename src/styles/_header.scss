@@ -90,6 +90,10 @@
     .link-button {
       cursor: pointer;
     }
+
+    .mobile-only-footer {
+      display: none;
+    }
   }
 
   &__toggle {
@@ -220,6 +224,40 @@
           color: $primary;
           background: rgba(56, 189, 248, 0.1);
           border-color: rgba(56, 189, 248, 0.32);
+        }
+      }
+
+      .mobile-only-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+        padding-top: 14px;
+        border-top: 1px solid $border;
+        width: 100%;
+
+        a {
+          width: auto;
+          border: none;
+          background: transparent;
+          padding: 0;
+          color: $sub-text;
+          font-size: $font-mobile-sm;
+          font-weight: 500;
+          transition: color 150ms ease;
+
+          &:hover {
+            color: $secondary;
+            background: transparent;
+            border-color: transparent;
+          }
+        }
+
+        .separator {
+          color: rgba($text, 0.2);
+          font-size: $font-mobile-xs;
+          user-select: none;
         }
       }
     }

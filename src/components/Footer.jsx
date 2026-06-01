@@ -35,6 +35,12 @@ function Footer() {
           </div>
 
           <div>
+            <h3>Legal</h3>
+            <Link to='/terms'>Terms of Service</Link>
+            <Link to='/privacy'>Privacy Policy</Link>
+          </div>
+
+          <div>
             <h3>Admin</h3>
             <Link to='/admin/login'>Admin login</Link>
           </div>
