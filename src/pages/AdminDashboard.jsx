@@ -10,6 +10,7 @@ const views = [
   { key: 'rejected', label: 'Rejected profiles' },
   { key: 'users', label: 'Users' },
   { key: 'policies', label: 'Terms & Policies' },
+  { key: 'backups', label: 'System Backups' },
 ];
 
 function AdminDashboard() {
@@ -21,6 +22,12 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Backup states
+  const [backups, setBackups] = useState([]);
+  const [backupsLoading, setBackupsLoading] = useState(false);
+  const [manualBackupLoading, setManualBackupLoading] = useState(false);
+  const [cooldownTime, setCooldownTime] = useState(0);
 
   // Pagination states for each section
   const [allPage, setAllPage] = useState(1);
@@ -98,7 +105,7 @@ function AdminDashboard() {
   };
 
   const fetchTabData = async (tabKey, page) => {
-    if (tabKey === 'policies') return;
+    if (tabKey === 'policies' || tabKey === 'backups') return;
     let url = '';
     if (tabKey === 'all') url = '/admin/profiles';
     else if (tabKey === 'pending') url = '/admin/profiles/pending';
@@ -159,6 +166,108 @@ function AdminDashboard() {
       setActionLoading(false);
     }
   };
+
+  const fetchBackups = async () => {
+    setBackupsLoading(true);
+    try {
+      const response = await api.get('/admin/backups');
+      setBackups(response.data.backups || []);
+    } catch (err) {
+      console.error('Failed to fetch backups:', err);
+    } finally {
+      setBackupsLoading(false);
+    }
+  };
+
+  const triggerManualBackup = async () => {
+    if (cooldownTime > 0) return;
+    setManualBackupLoading(true);
+    try {
+      const response = await api.post('/admin/backups');
+      if (response.data.backup) {
+        setBackups((prev) => [response.data.backup, ...prev]);
+      } else {
+        await fetchBackups();
+      }
+      alert('System backup generated successfully.');
+      
+      const endTime = Date.now() + 600 * 1000;
+      localStorage.setItem('backup_cooldown_end', endTime.toString());
+      setCooldownTime(600);
+    } catch (err) {
+      alert('Failed to generate backup: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setManualBackupLoading(false);
+    }
+  };
+
+  const downloadBackup = async (filename) => {
+    try {
+      const response = await api.get(`/admin/backups/${filename}/download`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (err) {
+      alert('Failed to download backup: ' + err.message);
+    }
+  };
+
+  const deleteBackup = async (filename) => {
+    if (!confirm(`Are you sure you want to permanently delete backup ${filename}?`)) {
+      return;
+    }
+    try {
+      await api.delete(`/admin/backups/${filename}`);
+      setBackups((prev) => prev.filter((b) => b.filename !== filename));
+    } catch (err) {
+      alert('Failed to delete backup: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const formatCooldown = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    if (view === 'backups') {
+      fetchBackups();
+    }
+  }, [view]);
+
+  useEffect(() => {
+    const end = localStorage.getItem('backup_cooldown_end');
+    if (end) {
+      const remaining = Math.ceil((parseInt(end, 10) - Date.now()) / 1000);
+      if (remaining > 0) {
+        setCooldownTime(remaining);
+      } else {
+        localStorage.removeItem('backup_cooldown_end');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cooldownTime <= 0) return;
+    const interval = setInterval(() => {
+      setCooldownTime((prev) => {
+        if (prev <= 1) {
+          localStorage.removeItem('backup_cooldown_end');
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [cooldownTime]);
 
   const currentProfiles = view === 'pending' ? pendingProfiles : view === 'rejected' ? rejectedProfiles : allProfiles;
   const getProfileCount = (viewKey) => {
@@ -304,6 +413,77 @@ function AdminDashboard() {
     ) : <p className="empty-state">No users found.</p>
   );
 
+  const renderBackups = () => (
+    <div className="backups-tab">
+      <div className="backups-header-row">
+        <h2>System Backups</h2>
+        <div className="backups-action-box">
+          <button
+            className="button"
+            onClick={triggerManualBackup}
+            disabled={manualBackupLoading || cooldownTime > 0}
+          >
+            {manualBackupLoading ? (
+              <>
+                <span className="button-spinner"></span>
+                Generating Backup...
+              </>
+            ) : cooldownTime > 0 ? (
+              `Backup Cooldown (${formatCooldown(cooldownTime)})`
+            ) : (
+              'Backup System Now'
+            )}
+          </button>
+          {cooldownTime > 0 && (
+            <span className="cooldown-text">Manual backup locked for security</span>
+          )}
+        </div>
+      </div>
+
+      {backupsLoading ? (
+        <p>Loading backup list...</p>
+      ) : backups.length ? (
+        <div className="backups-table-container">
+          <table className="backups-table">
+            <thead>
+              <tr>
+                <th>Date Generated</th>
+                <th>Filename</th>
+                <th>Size</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {backups.map((backup) => (
+                <tr key={backup.filename}>
+                  <td>{backup.created_at}</td>
+                  <td className="backup-filename">{backup.filename}</td>
+                  <td>{backup.size}</td>
+                  <td className="backup-actions">
+                    <button
+                      className="button button--small"
+                      onClick={() => downloadBackup(backup.filename)}
+                    >
+                      Download
+                    </button>
+                    <button
+                      className="button button--secondary button--small"
+                      onClick={() => deleteBackup(backup.filename)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="empty-state">No backups generated yet.</p>
+      )}
+    </div>
+  );
+
   return (
     <section className="page-card admin-page">
       <div className="page-header">
@@ -323,7 +503,7 @@ function AdminDashboard() {
                 onClick={() => setView(item.key)}
               >
                 <span>{item.label}</span>
-                {item.key !== 'policies' && (
+                {item.key !== 'policies' && item.key !== 'backups' && (
                   <span className="sidebar-count">{getProfileCount(item.key)}</span>
                 )}
               </button>
@@ -338,6 +518,10 @@ function AdminDashboard() {
             ) : view === 'policies' ? (
               <Card title="Manage Terms & Policies">
                 <AdminPolicyEditor />
+              </Card>
+            ) : view === 'backups' ? (
+              <Card title="System Backups">
+                {renderBackups()}
               </Card>
             ) : (
               <Card title={views.find((item) => item.key === view)?.label || 'Profiles'}>
