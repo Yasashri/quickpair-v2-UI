@@ -45,7 +45,7 @@
     display: grid;
     gap: 18px;
 
-    label {
+    label:not(.checkbox-label) {
       display: grid;
       gap: 8px;
       color: $text;
@@ -232,7 +232,7 @@
     form {
       gap: 16px;
 
-      label {
+      label:not(.checkbox-label) {
         font-size: $font-mobile-sm;
 
         input {

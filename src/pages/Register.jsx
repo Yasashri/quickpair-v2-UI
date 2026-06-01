@@ -83,30 +83,28 @@ function Register() {
           />
         </label>
         
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.85rem", color: "#9ca3af" }}>
+        <div className="checkbox-group">
+          <label className={`checkbox-label ${form.terms ? "is-checked" : ""}`}>
             <input
               type="checkbox"
               checked={form.terms}
               onChange={(e) => setForm({ ...form, terms: e.target.checked })}
               disabled={loading}
-              style={{ width: "16px", height: "16px", cursor: "pointer" }}
             />
             <span>
-              I agree to the <Link to="/terms" target="_blank" style={{ color: "#ff4f7b", textDecoration: "underline" }} onClick={(e) => e.stopPropagation()}>Terms of Service</Link>
+              I agree to the <Link to="/terms" target="_blank" onClick={(e) => e.stopPropagation()}>Terms of Service</Link>
             </span>
           </label>
 
-          <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.85rem", color: "#9ca3af" }}>
+          <label className={`checkbox-label ${form.privacy ? "is-checked" : ""}`}>
             <input
               type="checkbox"
               checked={form.privacy}
               onChange={(e) => setForm({ ...form, privacy: e.target.checked })}
               disabled={loading}
-              style={{ width: "16px", height: "16px", cursor: "pointer" }}
             />
             <span>
-              I agree to the <Link to="/privacy" target="_blank" style={{ color: "#ff4f7b", textDecoration: "underline" }} onClick={(e) => e.stopPropagation()}>Privacy Policy</Link>
+              I agree to the <Link to="/privacy" target="_blank" onClick={(e) => e.stopPropagation()}>Privacy Policy</Link>
             </span>
           </label>
         </div>

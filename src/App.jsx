@@ -65,28 +65,26 @@ function App() {
         We have updated our Terms of Service and Privacy Policy. Please review and agree to the updated terms to continue using QuickPair.
       </p>
       
-      <div className="policy-checkbox-container" style={{ display: "flex", flexDirection: "column", gap: "12px", background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", margin: "16px 0 8px" }}>
-        <label style={{ display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer", fontSize: "0.9rem", color: "#e5e7eb" }}>
+      <div className="policy-checkbox-container">
+        <label className={`checkbox-label ${policyTermsChecked ? "is-checked" : ""}`}>
           <input
             type="checkbox"
             checked={policyTermsChecked}
             onChange={(e) => setPolicyTermsChecked(e.target.checked)}
-            style={{ marginTop: "3px", width: "16px", height: "16px", cursor: "pointer" }}
           />
           <span>
-            I agree to the <Link to="/terms" target="_blank" style={{ color: "#ff4f7b", fontWeight: "600", textDecoration: "underline" }} onClick={(e) => e.stopPropagation()}>Terms of Service</Link>
+            I agree to the <Link to="/terms" target="_blank" onClick={(e) => e.stopPropagation()}>Terms of Service</Link>
           </span>
         </label>
 
-        <label style={{ display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer", fontSize: "0.9rem", color: "#e5e7eb" }}>
+        <label className={`checkbox-label ${policyPrivacyChecked ? "is-checked" : ""}`}>
           <input
             type="checkbox"
             checked={policyPrivacyChecked}
             onChange={(e) => setPolicyPrivacyChecked(e.target.checked)}
-            style={{ marginTop: "3px", width: "16px", height: "16px", cursor: "pointer" }}
           />
           <span>
-            I agree to the <Link to="/privacy" target="_blank" style={{ color: "#ff4f7b", fontWeight: "600", textDecoration: "underline" }} onClick={(e) => e.stopPropagation()}>Privacy Policy</Link>
+            I agree to the <Link to="/privacy" target="_blank" onClick={(e) => e.stopPropagation()}>Privacy Policy</Link>
           </span>
         </label>
       </div>
