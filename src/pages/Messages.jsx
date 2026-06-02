@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
-import Card from "../components/Card";
 import StatusMessage from "../components/StatusMessage";
 import ScrollToTop from "../components/ScrollToTop";
 import { formatLastSeen } from "../utils/date";
@@ -137,7 +136,8 @@ function Messages() {
       {selectedThread ? (
         <ConversationView thread={selectedThread} onClose={() => setSelectedThread(null)} />
       ) : (
-        <Card title='Messaged profiles'>
+        <div className='messages-section'>
+          <h2 className='messages-section-title'>Messaged profiles</h2>
           {loading ? (
             <div className='messages-list'>
               {[...Array(4)].map((_, i) => (
@@ -217,7 +217,7 @@ function Messages() {
               )}
             </div>
           )}
-        </Card>
+        </div>
       )}
 
     </section>

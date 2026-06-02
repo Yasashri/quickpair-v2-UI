@@ -216,24 +216,6 @@ function Profiles() {
                 className="card-link"
               >
                 <Card
-                  badge={
-                    <span 
-                      className={`status-indicator-badge ${
-                        profile.user?.is_online ? 'status-indicator-badge--online' : 'status-indicator-badge--offline'
-                      }`}
-                      style={{ backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
-                    >
-                      {profile.user?.is_online && <span className="status-badge-dot" />}
-                      <span>
-                        {profile.user?.is_online 
-                          ? 'Online' 
-                          : profile.user?.last_seen_at 
-                            ? formatLastSeen(profile.user.last_seen_at) 
-                            : 'Offline'
-                        }
-                      </span>
-                    </span>
-                  }
                   title={
                     <div className="profile-card-title">
                       <span>{`${profile.display_name || "New member"}${profile.age ? `, ${profile.age}` : ""}`}</span>
@@ -252,6 +234,28 @@ function Profiles() {
                       ? `${profile.city}, ${profile.country}`
                       : "Location hidden"}
                   </p>
+
+                  <div className="profile-status-inline">
+                    <span 
+                      className={`status-indicator-badge-inline ${
+                        profile.user?.is_online ? 'online' : 'offline'
+                      }`}
+                    >
+                      {profile.user?.is_online ? (
+                        <span className="status-badge-dot" />
+                      ) : (
+                        <span className="status-badge-dot-offline" />
+                      )}
+                      <span>
+                        {profile.user?.is_online 
+                          ? 'Online' 
+                          : profile.user?.last_seen_at 
+                            ? `Active ${formatLastSeen(profile.user.last_seen_at)}` 
+                            : 'Offline'
+                        }
+                      </span>
+                    </span>
+                  </div>
 
                   <div className="profile-tags">
                     {profile.gender && (

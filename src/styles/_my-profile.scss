@@ -45,13 +45,18 @@
     }
   }
 
-  .card {
-    border-radius: 24px;
-    background: rgba(15, 26, 46, 0.76);
+  .profile-edit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
 
-    &__title {
-      font-size: $font-2xl;
-    }
+  .profile-edit-title {
+    margin: 0;
+    color: $white;
+    font-size: $font-2xl;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -89,6 +94,7 @@
 
     .button {
       margin-top: 12px;
+      align-self: flex-end;
     }
   }
 
@@ -347,12 +353,10 @@
     margin-top: 28px;
     padding: 28px;
     border-radius: 24px;
+  }
 
-    .card {
-      &__title {
-        font-size: $font-xl;
-      }
-    }
+  .profile-edit-title {
+    font-size: $font-xl;
   }
 
   .profile-form {
@@ -393,12 +397,10 @@
     margin-bottom: 44px;
     padding: 18px;
     border-radius: 20px;
+  }
 
-    .card {
-      &__title {
-        font-size: $font-mobile-xl;
-      }
-    }
+  .profile-edit-title {
+    font-size: $font-mobile-xl;
   }
 
   .profile-form {

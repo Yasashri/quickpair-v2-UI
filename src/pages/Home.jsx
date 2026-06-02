@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import api from "../api/api";
+import Card from "../components/Card";
+import { formatLastSeen } from "../utils/date";
 
 const slides = [
   {
@@ -46,6 +48,22 @@ const featureItemVariants = {
 };
 
 function Home() {
+  const [newestProfiles, setNewestProfiles] = useState([]);
+  const [loadingNewest, setLoadingNewest] = useState(true);
+
+  useEffect(() => {
+    setLoadingNewest(true);
+    api.get("/profiles?sort=recent")
+      .then((response) => {
+        const list = response.data.data || [];
+        setNewestProfiles(list.slice(0, 5));
+        setLoadingNewest(false);
+      })
+      .catch(() => {
+        setLoadingNewest(false);
+      });
+  }, []);
+
   const [form, setForm] = useState({ name: "", email: "", type: "issue", message: "" });
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
@@ -84,16 +102,16 @@ function Home() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="hero-card__content">
-          <span className="eyebrow">Dating made simple</span>
+          {/* <span className="eyebrow">Dating made simple</span> */}
 
           <h1>
             Find your next <span>Dinner Date</span> in minutes
           </h1>
 
-          <p>
+       {/*    <p>
             QuickPair connects food lovers and hopeless romantics for cozy
             coffee chats, rooftop dinners, and everything in between.
-          </p>
+          </p> */}
 
           <div className="hero-actions">
             <Link to="/register" className="button">
@@ -105,6 +123,110 @@ function Home() {
             </Link>
           </div>
         </div>
+      </motion.div>
+
+      {/* Newest Members Section */}
+      <motion.div 
+        className="newest-members-section"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="newest-members-section__header">
+          <span className="eyebrow" style={{ borderColor: "rgba(16, 185, 129, 0.3)", background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>New members</span>
+          <h2>Our Newest Members</h2>
+          <p>Say hello to the latest people who joined QuickPair.</p>
+        </div>
+
+        {loadingNewest ? (
+          <div className='grid-list grid-list--newest'>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="card skeleton-card" style={{ pointerEvents: "none", opacity: 0.7 }}>
+                <div className="card__image skeleton"></div>
+                <div className="card__body">
+                  <div className="skeleton skeleton-title"></div>
+                  <div className="skeleton skeleton-meta"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className='grid-list grid-list--newest'>
+            {newestProfiles.map((profile) => {
+              const profileImage = profile.profile_image_url || `/avatar.jpg`;
+              return (
+                <Link
+                  key={profile.id}
+                  to={`/profiles/${profile.id}`}
+                  className="card-link"
+                >
+                  <Card
+                    title={
+                      <div className="profile-card-title">
+                        <span>{`${profile.display_name || "New member"}${profile.age ? `, ${profile.age}` : ""}`}</span>
+                        {profile.user?.email_verified_at && (
+                          <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+                            &nbsp;✓
+                          </span>
+                        )}
+                      </div>
+                    }
+                    image={profileImage}
+                    imageAlt={profile.display_name || "Profile image"}
+                  >
+                    <p className='profile-meta'>
+                      {profile.city
+                        ? `${profile.city}, ${profile.country}`
+                        : "Location hidden"}
+                    </p>
+
+                    <div className="profile-status-inline">
+                      <span 
+                        className={`status-indicator-badge-inline ${
+                          profile.user?.is_online ? 'online' : 'offline'
+                        }`}
+                      >
+                        {profile.user?.is_online ? (
+                          <span className="status-badge-dot" />
+                        ) : (
+                          <span className="status-badge-dot-offline" />
+                        )}
+                        <span>
+                          {profile.user?.is_online 
+                            ? 'Online' 
+                            : profile.user?.last_seen_at 
+                              ? `Active ${formatLastSeen(profile.user.last_seen_at)}` 
+                              : 'Offline'
+                          }
+                        </span>
+                      </span>
+                    </div>
+
+                    <div className="profile-tags">
+                      {profile.gender && (
+                        <span className="profile-tag profile-tag--gender">
+                          {profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1)}
+                        </span>
+                      )}
+                      <span className="profile-tag profile-tag--looking">
+                        Looking: <strong>{profile.looking_for || "anyone"}</strong>
+                      </span>
+                    </div>
+
+                    <div className='button button--small'>
+                      View profile
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+
+            {newestProfiles.length === 0 && (
+              <p className='empty-state'>No new members found.</p>
+            )}
+          </div>
+        )}
       </motion.div>
 
       {/* About Us Card Scroll Animation */}

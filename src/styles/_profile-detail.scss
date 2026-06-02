@@ -6,14 +6,10 @@
   display: grid;
   gap: 24px;
 
-  .card {
-    background:
-      radial-gradient(
-        circle at top left,
-        rgba(56, 189, 248, 0.1),
-        transparent 34%
-      ),
-      rgba(15, 26, 46, 0.88);
+  .profile-detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
   .profile-status,

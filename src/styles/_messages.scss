@@ -38,6 +38,21 @@
     }
   }
 
+  .messages-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .messages-section-title {
+    margin: 0;
+    color: $white;
+    font-size: $font-xl;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
   .messages-list {
     display: grid;
     gap: 14px;

@@ -384,17 +384,6 @@
 
       select {
         cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3aecf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 16px center;
-        background-size: 16px;
-        padding-right: 40px;
-
-        option {
-          background-color: $card;
-          color: $text;
-        }
       }
 
       textarea {
@@ -434,6 +423,53 @@
   }
 }
 
+.newest-members-section {
+  padding: 40px;
+  border: 1px solid $border;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(255, 79, 123, 0.08), transparent 38%),
+    rgba(15, 26, 46, 0.86);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.24);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  &__header {
+    h2 {
+      margin: 16px 0 12px;
+      color: $white;
+      font-size: $font-2xl;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0;
+      color: $sub-text;
+      font-size: $font-base;
+      line-height: 1.6;
+    }
+  }
+
+  .grid-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
 /* Tablet responsive overrides */
 @media (max-width: #{$tablet - 1px}) {
   .about-card {
@@ -442,6 +478,11 @@
   }
 
   .contact-card {
+    padding: 32px 24px;
+    border-radius: 22px;
+  }
+
+  .newest-members-section {
     padding: 32px 24px;
     border-radius: 22px;
   }
@@ -492,5 +533,11 @@
         width: 100%;
       }
     }
+  }
+
+  .newest-members-section {
+    padding: 24px 18px;
+    border-radius: 18px;
+    gap: 20px;
   }
 }

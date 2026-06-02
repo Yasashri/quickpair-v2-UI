@@ -49,9 +49,31 @@ select {
 }
 
 select {
+  cursor: pointer;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  
+  // Custom chevron-down arrow SVG in $sub-text color
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3aecf' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  background-size: 16px !important;
+  padding-right: 44px !important; // Prevent text overlapping the arrow
+  border-radius: 16px; // default border radius matching site inputs
+  transition: all 180ms ease;
+
   option {
     background-color: #0f1a2e; /* matches $card */
     color: #e5e7eb; /* matches $text */
+    padding: 10px;
+  }
+
+  &:focus {
+    border-color: rgba(56, 189, 248, 0.48) !important;
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12) !important;
+    // Glowing chevron-down SVG in sky blue when focused
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
   }
 }
 

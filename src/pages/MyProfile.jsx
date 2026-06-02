@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
-import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
 import useAuth from "../hooks/useAuth";
 import Modal from "../components/Modal";
@@ -13,6 +12,7 @@ function MyProfile() {
   const [profile, setProfile] = useState(null);
   const [previewImage, setPreviewImage] = useState("/avatar.jpg");
   const [showModal, setShowModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   useEffect(() => {
@@ -176,6 +176,7 @@ function MyProfile() {
       }
 
       setMessage("Profile submitted for review.");
+      setShowSuccessModal(true);
     } catch (error) {
       const errors = error.response?.data?.errors;
       const serverMessage = error.response?.data?.message;
@@ -203,7 +204,8 @@ function MyProfile() {
         </div>
       )}
 
-      <Card title={profile ? "Update your profile" : "Create your profile"}>
+      <div className="profile-edit-section">
+        <h2 className="profile-edit-title">{profile ? "Update your profile" : "Create your profile"}</h2>
         <form className='profile-form' onSubmit={handleSubmit}>
           <fieldset
             disabled={saving}
@@ -258,7 +260,7 @@ function MyProfile() {
                   />
 
                   <div className="profile-image-info">
-                    <h3>Profile Photo <span style={{ color: "#ff4f7b" }}>*</span></h3>
+                    <h3>Profile Photo</h3>
                     <p>
                       Upload a clear photo. This image will be shown on your public
                       profile after approval.
@@ -390,7 +392,7 @@ function MyProfile() {
             </div>
           </fieldset>
         </form>
-      </Card>
+      </div>
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -400,6 +402,14 @@ function MyProfile() {
         confirmText='Verify Now'
         cancelText='Close'
         onConfirm={() => navigate("/verify-email")}
+      />
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        type="success"
+        title="Profile Submitted"
+        message="Your profile has been submitted for review. Our admins will review and get to it soon."
+        confirmText="OK"
       />
       <CameraModal
         isOpen={isCameraOpen}

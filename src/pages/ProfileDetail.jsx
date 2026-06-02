@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api/api";
-import Card from "../components/Card";
 import useAuth from "../hooks/useAuth";
 import ScrollToTop from "../components/ScrollToTop";
 import { formatLastSeen } from "../utils/date";
@@ -47,7 +46,7 @@ function ProfileDetail() {
     return (
       <section className='page-card profile-page skeleton-profile-detail'>
         <ScrollToTop />
-        <Card title={<div className="skeleton skeleton-detail-badge"></div>}>
+        <div className="profile-detail-section">
           <div className='profile-hero'>
             <div className="skeleton skeleton-detail-image"></div>
 
@@ -69,7 +68,7 @@ function ProfileDetail() {
               </div>
             ))}
           </dl>
-        </Card>
+        </div>
       </section>
     );
   }
@@ -85,7 +84,7 @@ function ProfileDetail() {
   return (
     <section className='page-card profile-page'>
       <ScrollToTop />
-      <Card title={profile.display_name || "Profile"}>
+      <div className="profile-detail-section">
         <div className='profile-hero'>
           <img
             src={profileImage}
@@ -181,7 +180,7 @@ function ProfileDetail() {
             </div>
           )}
         </dl>
-      </Card>
+      </div>
     </section>
   );
 }
