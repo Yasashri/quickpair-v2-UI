@@ -56,13 +56,48 @@
 }
 
 .profile-form {
-  display: grid;
-  gap: 18px;
+  display: block;
+
+  .profile-form-layout {
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    gap: 32px;
+    align-items: start;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  .profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 24px;
+    
+    @media (max-width: 992px) {
+      position: static;
+    }
+  }
+
+  .profile-main-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .button {
+      margin-top: 12px;
+    }
+  }
+
   .profile-status-card {
-    padding: 16px 18px;
+    padding: 20px;
     border: 1px solid $border;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.04);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    text-align: left;
 
     span {
       display: inline-flex;
@@ -101,7 +136,7 @@
 
     &.is-approved {
       span {
-        color: $primary;
+        color: $secondary;
         border: 1px solid rgba(56, 189, 248, 0.34);
         background: rgba(56, 189, 248, 0.1);
       }
@@ -109,7 +144,7 @@
 
     &.is-rejected {
       span {
-        color: $secondary;
+        color: $primary;
         border: 1px solid rgba(255, 79, 123, 0.34);
         background: rgba(255, 79, 123, 0.1);
       }
@@ -118,38 +153,100 @@
 
   .profile-image-preview {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 18px;
-    padding: 18px;
+    text-align: center;
+    gap: 20px;
+    padding: 28px 24px;
     border: 1px solid $border;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.04);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 
     img {
-      width: 120px;
-      height: 120px;
-      flex: 0 0 120px;
-      border: 2px solid rgba(56, 189, 248, 0.32);
-      border-radius: 24px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
       object-fit: cover;
       background: $card;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      &.status-border-approved {
+        border: 3px solid $secondary;
+        box-shadow: 0 0 16px rgba(56, 189, 248, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+      &.status-border-pending {
+        border: 3px solid $text;
+        box-shadow: 0 0 16px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+      &.status-border-rejected {
+        border: 3px solid $primary;
+        box-shadow: 0 0 16px rgba(255, 79, 123, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+      &.status-border-new {
+        border: 3px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
     }
 
-    div {
+    .profile-image-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+
       h3 {
-        margin: 0 0 8px;
+        margin: 0;
         color: $white;
-        font-size: $font-lg;
+        font-size: $font-md;
+        font-weight: 700;
         line-height: 1.2;
       }
 
       p {
         margin: 0;
         color: $sub-text;
-        font-size: $font-sm;
-        line-height: 1.6;
+        font-size: 0.85rem;
+        line-height: 1.5;
       }
+
+      .photo-input-group {
+        margin-top: 8px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+
+  .photo-file-label-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: rgba(56, 189, 248, 0.1);
+    color: $secondary;
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    font-size: $font-sm;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 180ms ease;
+
+    &:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.44);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 
@@ -264,10 +361,25 @@
     }
 
     .profile-image-preview {
+      flex-direction: row;
+      text-align: left;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+
       img {
-        width: 110px;
-        height: 110px;
-        flex: 0 0 110px;
+        width: 120px;
+        height: 120px;
+        flex: 0 0 120px;
+      }
+
+      .profile-image-info {
+        align-items: flex-start;
+        text-align: left;
+
+        .photo-input-group {
+          justify-content: flex-start;
+        }
       }
     }
   }
@@ -291,29 +403,6 @@
 
   .profile-form {
     gap: 16px;
-
-    .profile-image-preview {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 16px;
-
-      img {
-        width: 100%;
-        height: 240px;
-        flex: initial;
-        border-radius: 18px;
-      }
-
-      div {
-        h3 {
-          font-size: $font-mobile-lg;
-        }
-
-        p {
-          font-size: $font-mobile-sm;
-        }
-      }
-    }
 
     .form-grid {
       grid-template-columns: 1fr;
@@ -344,80 +433,31 @@
 }
 
 /* SMALL MOBILE */
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .page-card {
     padding: 14px;
   }
 
   .profile-form {
     .profile-image-preview {
+      flex-direction: column !important;
+      text-align: center !important;
+      padding: 20px 16px !important;
+
       img {
-        height: 210px;
+        width: 110px !important;
+        height: 110px !important;
+        flex: 0 0 110px !important;
       }
-    }
 
-    input[type="file"] {
-      padding: 12px;
+      .profile-image-info {
+        align-items: center !important;
+        text-align: center !important;
 
-      &::file-selector-button {
-        display: block;
-        width: 100%;
-        margin: 0 0 10px;
+        .photo-input-group {
+          justify-content: center !important;
+        }
       }
-    }
-  }
-}
-
-.photo-input-group {
-  display: flex;
-  gap: 16px;
-  align-items: flex-end;
-  
-  .photo-file-label {
-    flex: 1;
-    margin: 0;
-  }
-  
-  .button-camera-trigger {
-    flex-shrink: 0;
-    min-height: 48px;
-    height: 48px;
-    border-radius: 16px;
-    padding: 0 20px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(56, 189, 248, 0.1);
-    color: $secondary;
-    border: 1px solid rgba(56, 189, 248, 0.28);
-    transition: all 180ms ease;
-    box-shadow: none;
-    margin-top: 0;
-    min-width: auto;
-    cursor: pointer;
-    
-    &:hover {
-      background: rgba(56, 189, 248, 0.18);
-      border-color: rgba(56, 189, 248, 0.44);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    
-    .button-camera-trigger {
-      width: 100%;
-      height: 48px;
     }
   }
 }

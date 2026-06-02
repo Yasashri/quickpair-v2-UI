@@ -25,6 +25,15 @@ function CameraModal({ isOpen, onClose, onCapture }) {
       streamRef.current.getTracks().forEach((track) => track.stop());
     }
 
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setHasError(true);
+      setErrorMessage(
+        "Camera access is not supported by your browser or requires a secure HTTPS connection. Please ensure the website URL starts with 'https://'."
+      );
+      setLoading(false);
+      return;
+    }
+
     try {
       const constraints = {
         video: {
@@ -59,9 +68,11 @@ function CameraModal({ isOpen, onClose, onCapture }) {
     }
   };
 
-  // Get available video devices
   const getDevices = async () => {
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        return [];
+      }
       const allDevices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = allDevices.filter((d) => d.kind === "videoinput");
       setDevices(videoDevices);

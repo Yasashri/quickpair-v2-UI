@@ -214,180 +214,180 @@ function MyProfile() {
               display: "contents",
             }}
           >
-            <div className={`profile-status-card ${status.className}`}>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  marginBottom: "8px",
-                }}
-              >
-                <span>{status.label}</span>
-                {user?.email_verified_at && (
-                  <span
-                    className='email-verified-badge-label'
+            <div className="profile-form-layout">
+              <div className="profile-sidebar">
+                <div className={`profile-status-card ${status.className}`}>
+                  <div
                     style={{
-                      color: "#10b981",
-                      border: "1px solid rgba(16, 185, 129, 0.34)",
-                      background: "rgba(16, 185, 129, 0.1)",
-                      display: "inline-flex",
-                      padding: "7px 12px",
-                      borderRadius: "999px",
-                      fontSize: "0.75rem",
-                      fontWeight: "800",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
+                      display: "flex",
+                      gap: "10px",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      marginBottom: "8px",
                     }}
                   >
-                    ✓ Email Verified
-                  </span>
-                )}
+                    <span>{status.label}</span>
+                    {user?.email_verified_at && (
+                      <span
+                        className='email-verified-badge-label'
+                        style={{
+                          color: "#10b981",
+                          border: "1px solid rgba(16, 185, 129, 0.34)",
+                          background: "rgba(16, 185, 129, 0.1)",
+                          display: "inline-flex",
+                          padding: "7px 12px",
+                          borderRadius: "999px",
+                          fontSize: "0.75rem",
+                          fontWeight: "800",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                        }}
+                      >
+                        ✓ Email Verified
+                      </span>
+                    )}
+                  </div>
+                  <p>{status.text}</p>
+                </div>
+
+                <div className='profile-image-preview'>
+                  <img
+                    src={previewImage ? previewImage : "/avatar.jpg"}
+                    alt='Profile preview'
+                    className={`status-border-${profile?.status || 'new'}`}
+                  />
+
+                  <div className="profile-image-info">
+                    <h3>Profile Photo <span style={{ color: "#ff4f7b" }}>*</span></h3>
+                    <p>
+                      Upload a clear photo. This image will be shown on your public
+                      profile after approval.
+                    </p>
+
+                    <div className="photo-input-group">
+                      <label className="photo-file-label-custom">
+                        <input
+                          type='file'
+                          accept='image/*'
+                          name='profile_image'
+                          onChange={handleImageChange}
+                          style={{ display: "none" }}
+                        />
+                        <span>📁 Choose Image</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p>{status.text}</p>
-            </div>
 
-            <div className='profile-image-preview'>
-              <img
-                src={previewImage ? previewImage : "/avatar.jpg"}
-                alt='Profile preview'
-              />
+              <div className="profile-main-form">
+                <div className='form-grid'>
+                  <label>
+                    First name
+                    <input
+                      value={data.first_name}
+                      onChange={(e) =>
+                        setData({ ...data, first_name: e.target.value })
+                      }
+                      required
+                    />
+                  </label>
 
-              <div>
-                <h3>Profile photo</h3>
-                <p>
-                  Upload a clear photo. This image will be shown on your public
-                  profile after approval.
-                </p>
+                  <label>
+                    Last name
+                    <input
+                      value={data.last_name}
+                      onChange={(e) =>
+                        setData({ ...data, last_name: e.target.value })
+                      }
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Display name
+                    <input
+                      value={data.display_name}
+                      onChange={(e) =>
+                        setData({ ...data, display_name: e.target.value })
+                      }
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Age
+                    <input
+                      value={data.age}
+                      onChange={(e) => setData({ ...data, age: e.target.value })}
+                      type='number'
+                      min='18'
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    Gender
+                    <select
+                      value={data.gender}
+                      onChange={(e) => setData({ ...data, gender: e.target.value })}
+                    >
+                      <option value='male'>Male</option>
+                      <option value='female'>Female</option>
+                      <option value='other'>Other</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Looking for
+                    <select
+                      value={data.looking_for}
+                      onChange={(e) =>
+                        setData({ ...data, looking_for: e.target.value })
+                      }
+                    >
+                      <option value='any'>Anyone</option>
+                      <option value='male'>Male</option>
+                      <option value='female'>Female</option>
+                      <option value='other'>Other</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    City
+                    <input
+                      required
+                      value={data.city}
+                      onChange={(e) => setData({ ...data, city: e.target.value })}
+                    />
+                  </label>
+
+                  <label>
+                    Country
+                    <input
+                      required
+                      value={data.country}
+                      onChange={(e) => setData({ ...data, country: e.target.value })}
+                    />
+                  </label>
+                </div>
+
+                {message && <p className='form-note'>{message}</p>}
+
+                <button type='submit' className='button' disabled={saving}>
+                  {saving ? (
+                    <>
+                      <span className='button-spinner'></span>
+                      Saving...
+                    </>
+                  ) : profile ? (
+                    "Update profile"
+                  ) : (
+                    "Create profile"
+                  )}
+                </button>
               </div>
             </div>
-
-            <div className="photo-input-group">
-              <label className="photo-file-label">
-                Profile image <span style={{ color: "#ff4f7b" }}>*</span>
-                <input
-                  type='file'
-                  accept='image/*'
-                  name='profile_image'
-                  onChange={handleImageChange}
-                />
-              </label>
-
-              <button
-                type="button"
-                className="button button-camera-trigger"
-                onClick={() => setIsCameraOpen(true)}
-              >
-                Take a Photo 📸
-              </button>
-            </div>
-
-            <div className='form-grid'>
-              <label>
-                First name
-                <input
-                  value={data.first_name}
-                  onChange={(e) =>
-                    setData({ ...data, first_name: e.target.value })
-                  }
-                  required
-                />
-              </label>
-
-              <label>
-                Last name
-                <input
-                  value={data.last_name}
-                  onChange={(e) =>
-                    setData({ ...data, last_name: e.target.value })
-                  }
-                  required
-                />
-              </label>
-
-              <label>
-                Display name
-                <input
-                  value={data.display_name}
-                  onChange={(e) =>
-                    setData({ ...data, display_name: e.target.value })
-                  }
-                  required
-                />
-              </label>
-
-              <label>
-                Age
-                <input
-                  value={data.age}
-                  onChange={(e) => setData({ ...data, age: e.target.value })}
-                  type='number'
-                  min='18'
-                  required
-                />
-              </label>
-
-              <label>
-                Gender
-                <select
-                  value={data.gender}
-                  onChange={(e) => setData({ ...data, gender: e.target.value })}
-                >
-                  <option value='male'>Male</option>
-                  <option value='female'>Female</option>
-                  <option value='other'>Other</option>
-                </select>
-              </label>
-
-              <label>
-                Looking for
-                <select
-                  value={data.looking_for}
-                  onChange={(e) =>
-                    setData({ ...data, looking_for: e.target.value })
-                  }
-                >
-                  <option value='any'>Anyone</option>
-                  <option value='male'>Male</option>
-                  <option value='female'>Female</option>
-                  <option value='other'>Other</option>
-                </select>
-              </label>
-            </div>
-
-            <label>
-              City
-              <input
-                required
-                value={data.city}
-                onChange={(e) => setData({ ...data, city: e.target.value })}
-              />
-            </label>
-
-            <label>
-              Country
-              <input
-                required
-                value={data.country}
-                onChange={(e) => setData({ ...data, country: e.target.value })}
-              />
-            </label>
-
-            {message && <p className='form-note'>{message}</p>}
-
-            <button type='submit' className='button' disabled={saving}>
-              {saving ? (
-                <>
-                  <span className='button-spinner'></span>
-                  Saving...
-                </>
-              ) : profile ? (
-                "Update profile"
-              ) : (
-                "Create profile"
-              )}
-            </button>
           </fieldset>
         </form>
       </Card>
