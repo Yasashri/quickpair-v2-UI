@@ -1,0 +1,13 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow: /admin/
+Disallow: /me
+Disallow: /messages
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /forgot-password
+
+# Allow all other pages
+Allow: /
+
+Sitemap: https://quickpair.ca/sitemap.xml
