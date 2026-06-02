@@ -134,7 +134,7 @@ function Profiles() {
       <div className='page-card'>
         <div className='page-header'>
           <span className='eyebrow'>Find your match</span>
-          <h1>Browse profiles</h1>
+          <h1>QuickPair members</h1>
           <p>
             Discover people who share your interests, favorite food spots, and
             dating goals.

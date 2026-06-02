@@ -119,7 +119,7 @@ function Home() {
             </Link>
 
             <Link to="/profiles" className="button button--secondary">
-              Browse profiles
+              See all members
             </Link>
           </div>
         </div>

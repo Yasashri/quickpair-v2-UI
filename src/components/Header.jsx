@@ -74,12 +74,12 @@ function Header() {
             </>
           ) : (
             <>
-              <Link to="/" onClick={closeMenu} className="mobile-only">
+              <Link to="/" onClick={closeMenu}>
                 Home
               </Link>
 
               <Link to="/profiles" onClick={closeMenu}>
-                Browse
+                Members
               </Link>
 
               <Link to="/me" onClick={closeMenu}>
