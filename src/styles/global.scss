@@ -280,3 +280,15 @@ $success-glow: rgba(16, 185, 129, 0.4);
   }
 }
 
+/* Sticky Footer Layout */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-container {
+  flex: 1 0 auto;
+}
+
+
