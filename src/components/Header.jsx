@@ -74,6 +74,10 @@ function Header() {
             </>
           ) : (
             <>
+              <Link to="/" onClick={closeMenu} className="mobile-only">
+                Home
+              </Link>
+
               <Link to="/profiles" onClick={closeMenu}>
                 Browse
               </Link>
