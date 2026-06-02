@@ -161,18 +161,7 @@
         display: flex;
         flex-direction: column;
 
-        > p:first-of-type {
-          display: -webkit-box;
-          line-clamp: 2;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          min-height: 2.8em;
-          margin: 0;
-          font-size: 0.875rem;
-          color: $sub-text;
-        }
+
 
         .profile-meta {
           font-size: 0.85rem;
@@ -188,18 +177,39 @@
           }
         }
 
-        .active-status {
-          font-size: 0.8rem;
-          margin: 0;
+        .profile-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 4px;
         }
 
-        .profile-looking {
-          font-size: 0.85rem;
-          margin: 0;
-          color: $sub-text;
-          
-          span {
+        .profile-tag {
+          font-size: 0.72rem;
+          font-weight: 600;
+          padding: 3px 8px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          line-height: 1.2;
+          display: inline-flex;
+          align-items: center;
+
+          &--gender {
+            background: rgba(56, 189, 248, 0.08);
+            color: $secondary;
+            border-color: rgba(56, 189, 248, 0.18);
+          }
+
+          &--looking {
+            background: rgba(255, 79, 123, 0.06);
             color: $primary;
+            border-color: rgba(255, 79, 123, 0.16);
+
+            strong {
+              font-weight: 700;
+              margin-left: 3px;
+              text-transform: capitalize;
+            }
           }
         }
 
@@ -403,19 +413,7 @@
           box-sizing: border-box;
           gap: 6px;
 
-          > p:first-of-type {
-            margin: 0;
-            display: -webkit-box;
-            line-clamp: 2;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 0.85rem;
-            line-height: 1.45;
-            color: rgba(229, 231, 235, 0.85);
-            min-height: auto;
-          }
+
 
           .profile-meta {
             margin: 0;
@@ -438,10 +436,7 @@
             display: none !important;
           }
 
-          .active-status,
-          .profile-looking {
-            display: none !important;
-          }
+
         }
       }
     }

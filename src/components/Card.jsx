@@ -1,9 +1,10 @@
-function Card({ title, image, imageAlt = "", children, footer }) {
+function Card({ title, image, imageAlt = "", children, footer, badge }) {
   return (
     <article className="card">
       {image && (
-        <div className="card__image">
+        <div className="card__image" style={{ position: "relative" }}>
           <img src={image} alt={imageAlt || title || "Card image"} />
+          {badge && <div className="card__image-badge">{badge}</div>}
         </div>
       )}
 

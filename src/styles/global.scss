@@ -153,6 +153,21 @@ $success-glow: rgba(16, 185, 129, 0.4);
   text-transform: uppercase;
   border: 1px solid rgba(255, 255, 255, 0.08);
 
+  @media (max-width: 768px) {
+    padding: 4px;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    justify-content: center;
+    border: none;
+    background: rgba(16, 185, 129, 0.2) !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5) !important;
+    
+    span:not(.status-badge-dot) {
+      display: none;
+    }
+  }
+
   &--online {
     color: $success;
     background: rgba(16, 185, 129, 0.08);
@@ -174,6 +189,10 @@ $success-glow: rgba(16, 185, 129, 0.4);
     color: $muted;
     background: rgba(255, 255, 255, 0.04);
     border-color: rgba(255, 255, 255, 0.08);
+
+    @media (max-width: 768px) {
+      display: none !important;
+    }
   }
 }
 

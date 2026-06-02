@@ -30,6 +30,7 @@
     height: 220px;
     overflow: hidden;
     background: $card;
+    position: relative;
 
     img {
       width: 100%;
@@ -37,6 +38,19 @@
       display: block;
       object-fit: cover;
       transition: 220ms ease;
+    }
+  }
+
+  &__image-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+
+    @media (max-width: 768px) {
+      top: 8px;
+      right: auto;
+      left: 8px;
     }
   }
 

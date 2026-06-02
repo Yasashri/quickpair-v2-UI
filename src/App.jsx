@@ -57,7 +57,11 @@ function App() {
     }
   };
 
-  const needsPolicyAcceptance = isAuthenticated && user && user.needs_policy_acceptance;
+  const needsPolicyAcceptance = isAuthenticated &&
+    user &&
+    user.needs_policy_acceptance &&
+    location.pathname !== "/terms" &&
+    location.pathname !== "/privacy";
 
   const policyModalMessage = (
     <div style={{ textAlign: "left", marginTop: "12px" }}>

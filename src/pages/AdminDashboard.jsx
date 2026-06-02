@@ -365,7 +365,6 @@ function AdminDashboard() {
           <div key={profile.id} className="admin-row">
             <div>
               <strong>{profile.display_name || profile.email || `Profile ${profile.id}`}</strong>
-              <p>{profile.bio?.slice(0, 80) || profile.summary?.slice(0, 80) || 'No summary available.'}</p>
               {profile.status && <small>Status: {profile.status}</small>}
             </div>
             <div className="admin-actions">

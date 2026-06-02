@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import ScrollToTop from "../components/ScrollToTop";
 import useAuth from "../hooks/useAuth";
 import Modal from "../components/Modal";
+import CameraModal from "../components/CameraModal";
 
 function MyProfile() {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ function MyProfile() {
   const [profile, setProfile] = useState(null);
   const [previewImage, setPreviewImage] = useState("/avatar.jpg");
   const [showModal, setShowModal] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   useEffect(() => {
     if (user && !user.email_verified_at) {
@@ -28,10 +30,7 @@ function MyProfile() {
     looking_for: "any",
     city: "",
     country: "",
-    occupation: "",
-    education: "",
     relationship_goal: "",
-    bio: "",
     profile_image: "",
   });
 
@@ -88,10 +87,7 @@ function MyProfile() {
           looking_for: profileData.looking_for || "any",
           city: profileData.city || "",
           country: profileData.country || "",
-          occupation: profileData.occupation || "",
-          education: profileData.education || "",
           relationship_goal: profileData.relationship_goal || "",
-          bio: profileData.bio || "",
           profile_image: "",
         });
 
@@ -115,6 +111,11 @@ function MyProfile() {
     setPreviewImage(URL.createObjectURL(file));
   };
 
+  const handleCameraCapture = (file, dataUrl) => {
+    setData({ ...data, profile_image: file });
+    setPreviewImage(dataUrl);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -127,7 +128,8 @@ function MyProfile() {
     setMessage("");
 
     const usesFileUpload = data.profile_image instanceof File;
-    const hasExistingImage = profile && (profile.profile_img_path || profile.profile_image_url);
+    const hasExistingImage =
+      profile && (profile.profile_img_path || profile.profile_image_url);
 
     if (!usesFileUpload && !hasExistingImage) {
       setMessage("Profile image is required. Please upload a profile photo.");
@@ -195,7 +197,7 @@ function MyProfile() {
       <ScrollToTop />
 
       {profile?.status === "rejected" && profile.admin_feedback && (
-        <div className="profile-rejection-banner">
+        <div className='profile-rejection-banner'>
           <h3>Profile Rejection Reason</h3>
           <p>{profile.admin_feedback}</p>
         </div>
@@ -203,12 +205,42 @@ function MyProfile() {
 
       <Card title={profile ? "Update your profile" : "Create your profile"}>
         <form className='profile-form' onSubmit={handleSubmit}>
-          <fieldset disabled={saving} style={{ border: "none", padding: 0, margin: 0, display: "contents" }}>
+          <fieldset
+            disabled={saving}
+            style={{
+              border: "none",
+              padding: 0,
+              margin: 0,
+              display: "contents",
+            }}
+          >
             <div className={`profile-status-card ${status.className}`}>
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  marginBottom: "8px",
+                }}
+              >
                 <span>{status.label}</span>
                 {user?.email_verified_at && (
-                  <span className="email-verified-badge-label" style={{ color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.34)", background: "rgba(16, 185, 129, 0.1)", display: "inline-flex", padding: "7px 12px", borderRadius: "999px", fontSize: "0.75rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <span
+                    className='email-verified-badge-label'
+                    style={{
+                      color: "#10b981",
+                      border: "1px solid rgba(16, 185, 129, 0.34)",
+                      background: "rgba(16, 185, 129, 0.1)",
+                      display: "inline-flex",
+                      padding: "7px 12px",
+                      borderRadius: "999px",
+                      fontSize: "0.75rem",
+                      fontWeight: "800",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
                     ✓ Email Verified
                   </span>
                 )}
@@ -231,15 +263,25 @@ function MyProfile() {
               </div>
             </div>
 
-            <label>
-              Profile image <span style={{ color: "#ff4f7b" }}>*</span>
-              <input
-                type='file'
-                accept='image/*'
-                name='profile_image'
-                onChange={handleImageChange}
-              />
-            </label>
+            <div className="photo-input-group">
+              <label className="photo-file-label">
+                Profile image <span style={{ color: "#ff4f7b" }}>*</span>
+                <input
+                  type='file'
+                  accept='image/*'
+                  name='profile_image'
+                  onChange={handleImageChange}
+                />
+              </label>
+
+              <button
+                type="button"
+                className="button button-camera-trigger"
+                onClick={() => setIsCameraOpen(true)}
+              >
+                Take a Photo 📸
+              </button>
+            </div>
 
             <div className='form-grid'>
               <label>
@@ -317,6 +359,7 @@ function MyProfile() {
             <label>
               City
               <input
+                required
                 value={data.city}
                 onChange={(e) => setData({ ...data, city: e.target.value })}
               />
@@ -325,33 +368,9 @@ function MyProfile() {
             <label>
               Country
               <input
+                required
                 value={data.country}
                 onChange={(e) => setData({ ...data, country: e.target.value })}
-              />
-            </label>
-
-            <label>
-              Occupation
-              <input
-                value={data.occupation}
-                onChange={(e) => setData({ ...data, occupation: e.target.value })}
-              />
-            </label>
-
-            <label>
-              Education
-              <input
-                value={data.education}
-                onChange={(e) => setData({ ...data, education: e.target.value })}
-              />
-            </label>
-
-            <label>
-              Bio
-              <textarea
-                value={data.bio}
-                onChange={(e) => setData({ ...data, bio: e.target.value })}
-                rows='5'
               />
             </label>
 
@@ -375,12 +394,17 @@ function MyProfile() {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        type="warning"
-        title="Email Verification Required"
-        message="Please verify your email address before updating your profile."
-        confirmText="Verify Now"
-        cancelText="Close"
+        type='warning'
+        title='Email Verification Required'
+        message='Please verify your email address before updating your profile.'
+        confirmText='Verify Now'
+        cancelText='Close'
         onConfirm={() => navigate("/verify-email")}
+      />
+      <CameraModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={handleCameraCapture}
       />
     </section>
   );

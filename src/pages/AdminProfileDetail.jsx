@@ -156,8 +156,6 @@ function AdminProfileDetail() {
                 </span>
 
                 <h2>{profile.display_name || "Profile"}</h2>
-
-                <p>{profile.bio || "No biography available."}</p>
               </div>
             </div>
 
@@ -176,12 +174,7 @@ function AdminProfileDetail() {
                 </div>
               )}
 
-              {profile.bio && (
-                <div>
-                  <dt>Biography</dt>
-                  <dd>{profile.bio}</dd>
-                </div>
-              )}
+
 
               {profile.age && (
                 <div>
@@ -197,19 +190,7 @@ function AdminProfileDetail() {
                 </div>
               )}
 
-              {profile.occupation && (
-                <div>
-                  <dt>Occupation</dt>
-                  <dd>{profile.occupation}</dd>
-                </div>
-              )}
 
-              {profile.education && (
-                <div>
-                  <dt>Education</dt>
-                  <dd>{profile.education}</dd>
-                </div>
-              )}
 
               {profile.relationship_goal && (
                 <div>

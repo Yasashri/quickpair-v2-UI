@@ -201,8 +201,6 @@ function Profiles() {
                   image="data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox%3D'0 0 100 100'%2F%3E"
                   imageAlt="Loading..."
                 >
-                  <div className="skeleton skeleton-bio"></div>
-                  <div className="skeleton skeleton-bio short"></div>
                   <div className="skeleton skeleton-meta"></div>
                   <div className="skeleton skeleton-button"></div>
                 </Card>
@@ -218,12 +216,27 @@ function Profiles() {
                 className="card-link"
               >
                 <Card
+                  badge={
+                    <span 
+                      className={`status-indicator-badge ${
+                        profile.user?.is_online ? 'status-indicator-badge--online' : 'status-indicator-badge--offline'
+                      }`}
+                      style={{ backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
+                    >
+                      {profile.user?.is_online && <span className="status-badge-dot" />}
+                      <span>
+                        {profile.user?.is_online 
+                          ? 'Online' 
+                          : profile.user?.last_seen_at 
+                            ? formatLastSeen(profile.user.last_seen_at) 
+                            : 'Offline'
+                        }
+                      </span>
+                    </span>
+                  }
                   title={
                     <div className="profile-card-title">
-                      <span>{profile.display_name || "New member"}</span>
-                      {profile.user?.is_online && (
-                        <span className="online-indicator-dot" title="Online" />
-                      )}
+                      <span>{`${profile.display_name || "New member"}${profile.age ? `, ${profile.age}` : ""}`}</span>
                       {profile.user?.email_verified_at && (
                         <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
                           &nbsp;✓
@@ -234,29 +247,22 @@ function Profiles() {
                   image={profile.profile_image_url || `/avatar.jpg`}
                   imageAlt={profile.display_name || "Profile image"}
                 >
-                  <p>{profile.bio || "No bio yet."}</p>
-
                   <p className='profile-meta'>
                     {profile.city
                       ? `${profile.city}, ${profile.country}`
                       : "Location hidden"}
                   </p>
 
-                  <p className='active-status'>
-                    {profile.user?.is_online ? (
-                      <span className="active-status--online">Online</span>
-                    ) : (
-                      profile.user?.last_seen_at && (
-                        <span className="active-status--offline">
-                          Active {formatLastSeen(profile.user.last_seen_at)}
-                        </span>
-                      )
+                  <div className="profile-tags">
+                    {profile.gender && (
+                      <span className="profile-tag profile-tag--gender">
+                        {profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1)}
+                      </span>
                     )}
-                  </p>
-
-                  <p className='profile-looking'>
-                    Looking for: <span>{profile.looking_for || "anyone"}</span>
-                  </p>
+                    <span className="profile-tag profile-tag--looking">
+                      Looking: <strong>{profile.looking_for || "anyone"}</strong>
+                    </span>
+                  </div>
 
                   <div className='button button--small'>
                     View profile

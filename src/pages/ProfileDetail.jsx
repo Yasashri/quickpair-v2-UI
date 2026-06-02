@@ -57,7 +57,6 @@ function ProfileDetail() {
               </div>
 
               <div className="skeleton skeleton-detail-name"></div>
-              <div className="skeleton skeleton-detail-bio"></div>
               <div className="skeleton skeleton-detail-btn"></div>
             </div>
           </div>
@@ -117,8 +116,6 @@ function ProfileDetail() {
 
             <h2>{profile.display_name || "New member"}</h2>
 
-            <p>{profile.bio || "No biography available."}</p>
-
             {/* Direct Message Action */}
             {!isOwnProfile && (
               <div style={{ marginTop: "24px" }}>
@@ -163,10 +160,7 @@ function ProfileDetail() {
             </dd>
           </div>
 
-          <div>
-            <dt>Occupation</dt>
-            <dd>{profile.occupation || "Not listed"}</dd>
-          </div>
+
 
           <div>
             <dt>Goal</dt>
