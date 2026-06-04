@@ -12,6 +12,8 @@ function Register() {
     terms: false,
     privacy: false,
   });
+  const [countryCode, setCountryCode] = useState("+94");
+  const [phoneInput, setPhoneInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showValidationModal, setShowValidationModal] = useState(false);
@@ -26,9 +28,20 @@ function Register() {
     }
     setLoading(true);
     setError("");
+
+    // Clean and build full phone number in E.164 format
+    let cleanedPhone = phoneInput.trim().replace(/[^0-9]/g, "");
+    if (cleanedPhone.startsWith("0")) {
+      cleanedPhone = cleanedPhone.substring(1);
+    }
+    const fullPhone = `${countryCode}${cleanedPhone}`;
+
     try {
-      await register(form);
-      navigate("/verify-email");
+      await register({
+        ...form,
+        phone: fullPhone,
+      });
+      navigate("/verify-phone");
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -57,6 +70,28 @@ function Register() {
             required
             disabled={loading}
           />
+        </label>
+        <label>
+          Phone number
+          <div className="phone-input-group">
+            <select
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+              className="country-code-select"
+              disabled={loading}
+            >
+              <option value="+94">🇱🇰 +94</option>
+              <option value="+1">🇨🇦 +1</option>
+            </select>
+            <input
+              value={phoneInput}
+              onChange={(e) => setPhoneInput(e.target.value)}
+              type='tel'
+              placeholder='e.g. 771234567'
+              required
+              disabled={loading}
+            />
+          </div>
         </label>
         <label>
           Password

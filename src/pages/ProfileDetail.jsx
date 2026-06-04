@@ -106,9 +106,9 @@ function ProfileDetail() {
                 </span>
               )}
 
-              {profile.user?.email_verified_at && (
+              {profile.user?.phone_verified_at && (
                 <span className="status-indicator-badge email-verified-badge" style={{ color: "#10b981", background: "rgba(16, 185, 129, 0.08)", borderColor: "rgba(16, 185, 129, 0.3)" }}>
-                  <span style={{ marginRight: "4px" }}>✓</span> Email Verified
+                  <span style={{ marginRight: "4px" }}>✓</span> Phone Verified
                 </span>
               )}
             </div>

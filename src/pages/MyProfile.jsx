@@ -16,7 +16,7 @@ function MyProfile() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   useEffect(() => {
-    if (user && !user.email_verified_at) {
+    if (user && !user.phone_verified_at) {
       setShowModal(true);
     }
   }, [user]);
@@ -119,7 +119,7 @@ function MyProfile() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (user && !user.email_verified_at) {
+    if (user && !user.phone_verified_at) {
       setShowModal(true);
       return;
     }
@@ -229,7 +229,7 @@ function MyProfile() {
                     }}
                   >
                     <span>{status.label}</span>
-                    {user?.email_verified_at && (
+                    {user?.phone_verified_at && (
                       <span
                         className='email-verified-badge-label'
                         style={{
@@ -245,7 +245,7 @@ function MyProfile() {
                           letterSpacing: "0.06em",
                         }}
                       >
-                        ✓ Email Verified
+                        ✓ Phone Verified
                       </span>
                     )}
                   </div>
@@ -397,11 +397,11 @@ function MyProfile() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         type='warning'
-        title='Email Verification Required'
-        message='Please verify your email address before updating your profile.'
+        title='Phone Verification Required'
+        message='Please verify your phone number before updating your profile.'
         confirmText='Verify Now'
         cancelText='Close'
-        onConfirm={() => navigate("/verify-email")}
+        onConfirm={() => navigate("/verify-phone")}
       />
       <Modal
         isOpen={showSuccessModal}

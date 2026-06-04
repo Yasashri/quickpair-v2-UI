@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import VerifyEmail from "./pages/VerifyEmail";
+import VerifyPhone from "./pages/VerifyPhone";
 import MyProfile from "./pages/MyProfile";
 import Messages from "./pages/Messages";
 import AdminLogin from "./pages/AdminLogin";
@@ -99,7 +99,7 @@ function App() {
     setResending(true);
     setBannerMessage("");
     try {
-      const response = await api.post("/email/resend");
+      const response = await api.post("/phone/resend");
       setBannerMessage(response.data.message || "OTP code sent!");
       setTimeout(() => setBannerMessage(""), 5000);
     } catch (err) {
@@ -110,7 +110,7 @@ function App() {
     }
   };
 
-  const showVerificationBanner = isAuthenticated && user && !user.email_verified_at && location.pathname !== "/verify-email";
+  const showVerificationBanner = isAuthenticated && user && !user.phone_verified_at && location.pathname !== "/verify-phone";
 
   return (
     <div className='app-shell'>
@@ -145,9 +145,9 @@ function App() {
 
         {showVerificationBanner && (
           <div className="container global-verification-banner">
-            <span>⚠️ Your email address is not verified. Please verify your email to unlock all features.</span>
+            <span>⚠️ Your phone number is not verified. Please verify your phone to unlock all features.</span>
             <div className="banner-actions">
-              <Link to="/verify-email" className="banner-link">Verify Now</Link>
+              <Link to="/verify-phone" className="banner-link">Verify Now</Link>
               <button onClick={handleResendVerification} disabled={resending} className="banner-button">
                 {resending ? "Resending..." : "Resend Code"}
               </button>
@@ -168,10 +168,10 @@ function App() {
             <Route path='/forgot-password' element={<ForgotPassword />} />
             <Route path='/reset-password' element={<ResetPassword />} />
             <Route
-              path='/verify-email'
+              path='/verify-phone'
               element={
                 <ProtectedRoute>
-                  <VerifyEmail />
+                  <VerifyPhone />
                 </ProtectedRoute>
               }
             />

@@ -165,8 +165,8 @@ function Home() {
                     title={
                       <div className="profile-card-title">
                         <span>{`${profile.display_name || "New member"}${profile.age ? `, ${profile.age}` : ""}`}</span>
-                        {profile.user?.email_verified_at && (
-                          <span className="verified-badge-tick" title="Email Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+                        {profile.user?.phone_verified_at && (
+                          <span className="verified-badge-tick" title="Phone Verified" style={{ color: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
                             &nbsp;✓
                           </span>
                         )}

@@ -4,7 +4,7 @@ import api from "../api/api";
 import useAuth from "../hooks/useAuth";
 import ScrollToTop from "../components/ScrollToTop";
 
-function VerifyEmail() {
+function VerifyPhone() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
@@ -17,7 +17,7 @@ function VerifyEmail() {
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
-    } else if (user?.email_verified_at) {
+    } else if (user?.phone_verified_at) {
       // If already verified, go directly to profile creation
       navigate("/me");
     }
@@ -30,9 +30,9 @@ function VerifyEmail() {
     setMessage("");
 
     try {
-      const response = await api.post("/email/verify", { code: code.trim() });
-      setMessage(response.data.message || "Email verified successfully!");
-      // Refresh AuthContext user details (including email_verified_at)
+      const response = await api.post("/phone/verify", { code: code.trim() });
+      setMessage(response.data.message || "Phone verified successfully!");
+      // Refresh AuthContext user details (including phone_verified_at)
       await refreshUser();
       // Redirect to /me profile page to complete the profile
       setTimeout(() => {
@@ -55,7 +55,7 @@ function VerifyEmail() {
     setMessage("");
 
     try {
-      const response = await api.post("/email/resend");
+      const response = await api.post("/phone/resend");
       setMessage(response.data.message || "A new verification code has been sent!");
     } catch (err) {
       setError(
@@ -72,10 +72,10 @@ function VerifyEmail() {
       <ScrollToTop />
       <span className="form-eyebrow">Verification required</span>
 
-      <h1>Verify Your Email</h1>
+      <h1>Verify Your Phone Number</h1>
 
       <p>
-        We have sent a 6-digit verification code to <strong>{user?.email}</strong>. 
+        We have sent a 6-digit verification code to <strong>{user?.phone}</strong>. 
         Please enter the code below to complete your registration.
       </p>
 
@@ -133,4 +133,4 @@ function VerifyEmail() {
   );
 }
 
-export default VerifyEmail;
+export default VerifyPhone;
