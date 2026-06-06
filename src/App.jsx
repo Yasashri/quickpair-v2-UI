@@ -102,6 +102,7 @@ function App() {
       const response = await api.post("/phone/resend");
       setBannerMessage(response.data.message || "OTP code sent!");
       setTimeout(() => setBannerMessage(""), 5000);
+      navigate("/verify-phone", { state: { justResent: true } });
     } catch (err) {
       setBannerMessage("Failed to send OTP.");
       setTimeout(() => setBannerMessage(""), 5000);
